@@ -102,7 +102,6 @@ public class StreamTweets {
 				ex.printStackTrace();
 			}
 
-			@Override
 			public void onStallWarning(StallWarning arg0) {
 				// TODO Auto-generated method stub
 
