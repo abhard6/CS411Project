@@ -7,9 +7,9 @@ import java.util.Properties;
 public class MysqlConnect {
     // init database constants
     private static final String DATABASE_DRIVER = "com.mysql.jdbc.Driver";
-    private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/RIFT";
-    private static final String USERNAME = "root";
-    private static final String PASSWORD = "pi";
+    private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/socsenti_rift";
+    private static final String USERNAME = "socsenti_rift";
+    private static final String PASSWORD = "cs411";
     private static final String MAX_POOL = "250";
 
     // init connection object
