@@ -7,12 +7,8 @@ import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
+import java.sql.Timestamp;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,9 +38,7 @@ public class StreamTweets {
 	public static Set<Character> blacklist = new HashSet<Character>();
 	public static Set <Character>whitespaceBlacklist = new HashSet<Character>();
 
-
 	public static void TweetsStream() throws TwitterException, InterruptedException{
-
 		final String ACCESS_TOKEN = "2909068004-RYCWeuz3sNgo5mnWMdi3KpKU6qTij7X10YiOC7T";
 
 		final String ACCESS_TOKEN_SECRET = "u1RcApATLWIVDAsNhtZ9jKKBSY2slk79FczDJ0MLpFuSM";
@@ -67,24 +61,31 @@ public class StreamTweets {
 
 		TwitterStream twitterStream = new TwitterStreamFactory(builder.build()).getInstance();
 		StatusListener listener = new StatusListener() {
+			int count = 0;
 
 			public void onStatus(Status status) {
+				if (count % 10 == 0) {
+					String withoutEmojis = removeEmojiAndSymbolFromString(status.getText());
 
+					String strippedtweet = stripTweet(withoutEmojis);
 
-				String withoutEmojis = removeEmojiAndSymbolFromString(status.getText());
+					String withoutPunctuation = removePunctuation(strippedtweet);
 
-				String strippedtweet = stripTweet(withoutEmojis);
+					int sentimentscore = findSentiment(withoutPunctuation);
 
-				String withoutPunctuation = removePunctuation(strippedtweet);
+					int tweet_id = (int) status.getId();
+					String location = status.getUser().getLocation();
 
-				int sentimentscore = findSentiment(withoutPunctuation);
+					// Get timestamp
+					java.sql.Timestamp timestamp = new java.sql.Timestamp(status.getCreatedAt().getTime());
 
-				int tweet_id = (int)status.getId();
-				String location = status.getUser().getLocation();
+					//insert into database here
+					// TODO: Location latidude longitude; reverse geocode?
+					Post p = Post.Insert(timestamp, withoutPunctuation, sentimentscore, 0, 0, "twitter");
 
-				//insert into database here
-
-				System.out.println(status.getId() + status.getText() + status.getGeoLocation()+ status.getUser().getLocation());
+					System.out.println(status.getId() + status.getText() + status.getGeoLocation() + status.getUser().getLocation());
+				}
+				count++;
 			}
 			public void onDeletionNotice(StatusDeletionNotice statusDeletionNotice) {
 				System.out.println("Got a status deletion notice id:" + statusDeletionNotice.getStatusId());
@@ -110,7 +111,7 @@ public class StreamTweets {
 
 
 		FilterQuery tweetFilterQuery = new FilterQuery(); // See 
-		String keywords[] = {"Illinois", "Happy","sad"};
+		String keywords[] = {};
 
 		tweetFilterQuery.track(keywords); // OR on keywords
 		tweetFilterQuery.locations(new double[][]{new double[]{-126.562500,30.448674},
@@ -128,7 +129,7 @@ public class StreamTweets {
 		twitterStream.filter(tweetFilterQuery);
 		//twitterStream.sample();
 
-		Thread.sleep(50000);
+		Thread.sleep(5000000);
 		twitterStream.cleanUp();
 		twitterStream.shutdown();
 	}
@@ -258,7 +259,7 @@ public class StreamTweets {
 
 		Properties props = new Properties();
 		props.setProperty("annotators", "tokenize, ssplit, parse, sentiment");
-		props.put("sentiment.model", "/Users/ashutoshbhardwaj/desktop/stanford-corenlp-full-2015-04-20/src/edu/stanford/nlp/sentiment/model.ser.gz");
+		props.put("sentiment.model", "model.ser.gz");
 		StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 		int mainSentiment = 0;
 		if (line != null && line.length() > 0) {
