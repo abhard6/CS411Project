@@ -21,8 +21,33 @@ public class Post {
     }
 
     public static Post Get(int id) {
-        // TODO: Grab post from mysql
-        return null;
+        MysqlConnect mysqlConnect = new MysqlConnect();
+
+        String select = "SELECT * FROM Post " +
+                "WHERE id=?";
+
+        Post p = null;
+
+        try {
+            PreparedStatement statement = mysqlConnect.connect().prepareStatement(select);
+            statement.setString(1, "" + id);
+            ResultSet rs = statement.executeQuery();
+            rs.first();
+
+            p = new Post(rs.getInt(1),
+                    rs.getTimestamp(2),
+                    rs.getString(3),
+                    rs.getInt(4),
+                    rs.getFloat(5),
+                    rs.getFloat(6),
+                    rs.getString(7));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            mysqlConnect.disconnect();
+        }
+
+        return p;
     }
 
     public static Post Insert(Timestamp timestamp,
