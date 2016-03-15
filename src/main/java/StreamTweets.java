@@ -39,6 +39,7 @@ public class StreamTweets {
 	public static Set <Character>whitespaceBlacklist = new HashSet<Character>();
 
 	public static void TweetsStream() throws TwitterException, InterruptedException{
+
 		final String ACCESS_TOKEN = "2909068004-RYCWeuz3sNgo5mnWMdi3KpKU6qTij7X10YiOC7T";
 
 		final String ACCESS_TOKEN_SECRET = "u1RcApATLWIVDAsNhtZ9jKKBSY2slk79FczDJ0MLpFuSM";
@@ -62,6 +63,7 @@ public class StreamTweets {
 		TwitterStream twitterStream = new TwitterStreamFactory(builder.build()).getInstance();
 		StatusListener listener = new StatusListener() {
 			int count = 0;
+
 
 			public void onStatus(Status status) {
 				if (count % 10 == 0) {

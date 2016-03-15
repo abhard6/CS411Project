@@ -67,5 +67,6 @@ public class Post {
         // TODO: getters and setters should read directly from the database, or be locally stored
         // We'll have to decide on this. Locally stored means only one read to the DB, but it's
         // data could have changed.
+        return;
     }
 }
