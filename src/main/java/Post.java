@@ -8,7 +8,13 @@ import java.sql.Timestamp;
  * Created by nprince on 3/13/16.
  */
 public class Post {
-    private int id;
+    public int id;
+    public Timestamp timestamp;
+    public String content;
+    public int sentiment;
+    public float latitude;
+    public float longitude;
+    public String source;
 
     public int getId() {
         return id;
@@ -60,13 +66,66 @@ public class Post {
             mysqlConnect.disconnect();
         }
 
-        return new Post(id);
+        return new Post(id, timestamp, content, sentiment, latitude, longitude, source);
     }
 
-    public Post(int id) {
-        // TODO: getters and setters should read directly from the database, or be locally stored
-        // We'll have to decide on this. Locally stored means only one read to the DB, but it's
-        // data could have changed.
-        return;
+    public boolean delete() {
+        MysqlConnect mysqlConnect = new MysqlConnect();
+
+        boolean ret = true;
+        try {
+            PreparedStatement statement = mysqlConnect.connect().prepareStatement("DELETE FROM Post " +
+                    "WHERE id=?");
+            statement.setString(1, "" + id);
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ret = false;
+        } finally {
+            mysqlConnect.disconnect();
+        }
+
+        return ret;
+    }
+
+    public boolean update() {
+        MysqlConnect mysqlConnect = new MysqlConnect();
+
+        String update = "UPDATE Post " +
+                "SET timestamp=?, content=?, sentiment=?, latitude=?, longitude=?, source=?" +
+                "WHERE id=?";
+
+        boolean ret = true;
+        try {
+            PreparedStatement statement = mysqlConnect.connect().prepareStatement(update);
+            statement.setString(1, timestamp.toString());
+            statement.setString(2, content);
+            statement.setString(3, "" + sentiment);
+            statement.setString(4, "" + latitude);
+            statement.setString(5, "" + longitude);
+            statement.setString(6, "" + source);
+            statement.setString(7, "" + id);
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ret = false;
+        } finally {
+            mysqlConnect.disconnect();
+        }
+
+        return ret;
+    }
+
+    // Do not use this constructor to create a new post; rather to mimic an existing one in the database.
+    // Use Post.Insert to create new posts.
+    public Post(int id, Timestamp timestamp, String content, int sentiment, float latitude, float longitude, String source) {
+        // Everything is locally stored. Use post.update() to update this post in the database with current settings
+        this.id = id;
+        this.timestamp = timestamp;
+        this.content = content;
+        this.sentiment = sentiment;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.source = source;
     }
 }

@@ -85,6 +85,7 @@ public class StreamTweets {
 					// TODO: Location latidude longitude; reverse geocode?
 					Post p = Post.Insert(timestamp, withoutPunctuation, sentimentscore, 0, 0, "twitter");
 
+					p.delete();
 					System.out.println(status.getId() + status.getText() + status.getGeoLocation() + status.getUser().getLocation());
 				}
 				count++;
