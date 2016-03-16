@@ -33,6 +33,7 @@ public class Post {
     public float latitude;
     public float longitude;
 
+
     @NotNull
     public String source;
 
@@ -98,6 +99,14 @@ public class Post {
 
     public void setSentiment(int sentiment) {
         this.sentiment = sentiment;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 
 } // class Post

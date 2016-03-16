@@ -61,30 +61,30 @@
         <form role="form">
             <div class="form-group">
                 <div class="col-xs-1">
-                    <input th:value="${entry.id}" class="form-control" placeholder="id" type="text"/>
+                    <input th:value="${entry.id}" class="id form-control" placeholder="id" type="text"/>
                 </div>
 
                 <div class="col-xs-2">
-                    <input th:value="${entry.timestamp}" class="form-control" type="text" placeholder="timestamp"/>
+                    <input th:value="${entry.timestamp}" class="timestamp form-control" type="text" placeholder="timestamp"/>
                 </div>
                 <div class="col-xs-4">
-                    <input th:value="${entry.content}" class="form-control" type="text" placeholder="content"/>
+                    <input th:value="${entry.content}" class="content form-control" type="text" placeholder="content"/>
                 </div>
                 <div class="col-xs-1">
-                    <input th:value="${entry.sentiment}" class="form-control" type="text" placeholder="sent"/>
+                    <input th:value="${entry.sentiment}" class="sentiment form-control" type="text" placeholder="sent"/>
                 </div>
                 <div class="col-xs-1">
-                    <input th:value="${entry.latitude}" class="form-control" type="text" placeholder="lat"/>
+                    <input th:value="${entry.latitude}" class="latitude form-control" type="text" placeholder="lat"/>
                 </div>
                 <div class="col-xs-1">
-                    <input th:value="${entry.longitude}" class="form-control" type="text" placeholder="long"/>
+                    <input th:value="${entry.longitude}" class="longitude form-control" type="text" placeholder="long"/>
                 </div>
                 <div class="col-xs-1">
-                    <input th:value="${entry.source}" class="form-control" type="text" placeholder="source"/>
+                    <input th:value="${entry.source}" class="source form-control" type="text" placeholder="source"/>
                 </div>
                 <div class="col-xs-1">
-                    <button style="margin-left:10px" class="pull-right btn btn-danger btn-sm glyphicon glyphicon-remove"></button>
-                    <button class="pull-right btn btn-warning btn-sm glyphicon glyphicon-refresh"></button>
+                    <button style="margin-left:10px" class="delete pull-right btn btn-danger btn-sm glyphicon glyphicon-remove"></button>
+                    <button class="update pull-right btn btn-warning btn-sm glyphicon glyphicon-refresh"></button>
                 </div>
             </div>
         </form>
@@ -121,6 +121,44 @@
         });
     });
 
+    $(".delete").click(function(e) {
+        var id = $(e.target).parent().parent().find(".id")[0].value
+
+        $.ajax({
+            url: "/delete",
+            method: 'POST',
+            dataType: 'json',
+            data: JSON.stringify({"id": id}),
+            contentType: 'application/json',
+            mimeType: 'application/json'
+        });
+    });
+
+    $(".update").click(function(e) {
+        var parent = $(e.target).parent().parent();
+        var id = parent.find(".id")[0].value
+        var timestamp = parent.find(".timestamp")[0].value;
+        var content = parent.find(".content")[0].value;
+        var sentiment = parent.find(".sentiment")[0].value;
+        var latitude = parent.find(".latitude")[0].value;
+        var longitude = parent.find(".longitude")[0].value;
+        var source = parent.find(".source")[0].value;
+
+        $.ajax({
+            url: "/update",
+            method: 'POST',
+            dataType: 'json',
+            data: JSON.stringify({"id": id,
+            "timestamp": timestamp,
+            "content": content,
+            "sentiment": sentiment,
+            "latitude": latitude,
+            "longitude": longitude,
+            "source": source}),
+            contentType: 'application/json',
+            mimeType: 'application/json'
+        });
+    });
 </script>
 
 <div class="row">
