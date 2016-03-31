@@ -2,10 +2,13 @@ package edu.illinois;
 
 import edu.illinois.models.Post;
 import edu.illinois.models.PostDao;
+import edu.illinois.models.TrendDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import twitter4j.conf.Configuration;
 
 import java.util.Map;
 
@@ -13,6 +16,13 @@ import java.util.Map;
 public class AdminController {
     @Autowired
     private PostDao _postDao;
+
+    @Autowired
+    private TrendDao _trendDao;
+
+    @Autowired
+    @Qualifier("TwitterService")
+    private TwitterService twitterService;
 
     private TweetStream tweetStream;
 
@@ -54,7 +64,7 @@ public class AdminController {
         System.out.println("Received POST request:" + body);
 
         try {
-            tweetStream = new TweetStream(_postDao);
+            tweetStream = new TweetStream(twitterService.getConf(), _postDao, _trendDao);
             tweetStream.start();
         } catch (Exception e) {
             e.printStackTrace();

@@ -16,6 +16,8 @@ import java.util.regex.Pattern;
 
 import edu.illinois.models.Post;
 import edu.illinois.models.PostDao;
+import edu.illinois.models.Trend;
+import edu.illinois.models.TrendDao;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.neural.rnn.RNNCoreAnnotations;
 import edu.stanford.nlp.pipeline.Annotation;
@@ -26,6 +28,7 @@ import edu.stanford.nlp.util.CoreMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
+import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 import twitter4j.FilterQuery;
 import twitter4j.StallWarning;
@@ -40,6 +43,7 @@ import twitter4j.conf.ConfigurationBuilder;
 
 public class TweetStream {
 	private PostDao _postDao;
+	private TrendDao _trendDao;
 
 	private TwitterStream twitterStream;
 	private FilterQuery tweetFilterQuery;
@@ -48,59 +52,49 @@ public class TweetStream {
 	public static Set<Character> blacklist = new HashSet<Character>();
 	public static Set <Character>whitespaceBlacklist = new HashSet<Character>();
 
-	public TweetStream(PostDao dao) throws TwitterException, InterruptedException{
+	public TweetStream(Configuration conf, PostDao dao, TrendDao dao2) throws TwitterException, InterruptedException{
 
 		_postDao = dao;
+		_trendDao = dao2;
 
-		final String ACCESS_TOKEN = "2909068004-RYCWeuz3sNgo5mnWMdi3KpKU6qTij7X10YiOC7T";
-
-		final String ACCESS_TOKEN_SECRET = "u1RcApATLWIVDAsNhtZ9jKKBSY2slk79FczDJ0MLpFuSM";
-
-		final String CONSUMER_KEY = "6wLy7xmTXSopQWpv8SvlUasob";
-
-		final String CONSUMER_SECRET = "DS4QbQzTm4xojUQs6VIMjJae4mK8sBy8Zql9Wt8RV2HJVxk0gh";
-
-
-		ConfigurationBuilder builder = new ConfigurationBuilder();
-
-		builder.setOAuthAccessToken(ACCESS_TOKEN);
-
-		builder.setOAuthAccessTokenSecret(ACCESS_TOKEN_SECRET);
-
-		builder.setOAuthConsumerKey(CONSUMER_KEY);
-
-		builder.setOAuthConsumerSecret(CONSUMER_SECRET);
-		builder.setJSONStoreEnabled(true);
-
-		twitterStream = new TwitterStreamFactory(builder.build()).getInstance();
+		twitterStream = new TwitterStreamFactory(conf).getInstance();
 		listener = new StatusListener() {
 			int count = 0;
 
 
 			public void onStatus(Status status) {
-				if (count % 10 == 0) {
-					String withoutEmojis = removeEmojiAndSymbolFromString(status.getText());
+				String withoutEmojis = removeEmojiAndSymbolFromString(status.getText());
 
-					String strippedtweet = stripTweet(withoutEmojis);
+				String strippedtweet = stripTweet(withoutEmojis);
 
-					String withoutPunctuation = removePunctuation(strippedtweet);
+				String withoutPunctuation = removePunctuation(strippedtweet);
 
-					int sentimentscore = findSentiment(withoutPunctuation);
+				int sentimentscore = findSentiment(withoutPunctuation);
 
-					int tweet_id = (int) status.getId();
-					String location = status.getUser().getLocation();
+				int tweet_id = (int) status.getId();
+				String location = status.getUser().getLocation();
 
-					// Get timestamp
-					java.sql.Timestamp timestamp = new java.sql.Timestamp(status.getCreatedAt().getTime());
+				// Get timestamp
+				java.sql.Timestamp timestamp = new java.sql.Timestamp(status.getCreatedAt().getTime());
 
-					//insert into database here
-					// TODO: Location latidude longitude; reverse geocode?
-					Post p = new Post(timestamp, withoutPunctuation, sentimentscore, 0, 0, "twitter");
+				ArrayList<Trend> postTrends = new ArrayList<Trend>();
+
+				//insert into database here
+				// TODO: Location latidude longitude; reverse geocode?
+
+				Iterable<Trend> trends = _trendDao.findAll();
+				for (Trend trend : trends) {
+					if (status.getText().contains(trend.getValue())) {
+						postTrends.add(trend);
+					}
+				}
+
+				// Only save if it had some trends
+				if (postTrends.size() > 0) {
+					Post p = new Post(timestamp, withoutPunctuation, sentimentscore, 0, 0, "twitter", postTrends);
 					_postDao.save(p);
-
 					System.out.println(status.getId() + status.getText() + status.getGeoLocation() + status.getUser().getLocation());
 				}
-				count++;
 			}
 			public void onDeletionNotice(StatusDeletionNotice statusDeletionNotice) {
 				System.out.println("Got a status deletion notice id:" + statusDeletionNotice.getStatusId());
