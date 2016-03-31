@@ -14,16 +14,17 @@ import twitter4j.conf.Configuration;
  */
 public class TrendSetter {
     public static void SetTrends(Configuration conf, TrendDao _trendDao) throws TwitterException {
-        _trendDao.deleteAll();
-
         TrendsResources trends = new TwitterFactory(conf).getInstance().trends();
 
         Trend[] trendsArr = trends.getPlaceTrends(23424977).getTrends();
 
         for (Trend t : trendsArr) {
-            edu.illinois.models.Trend myTrend = new edu.illinois.models.Trend(t.getName());
 
-            _trendDao.save(myTrend);
+            // Only save new trends
+            if (_trendDao.findByValue(t.getName()).size() == 0) {
+                edu.illinois.models.Trend myTrend = new edu.illinois.models.Trend(t.getName());
+                _trendDao.save(myTrend);
+            }
         }
     }
 }
