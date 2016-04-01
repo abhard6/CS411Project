@@ -14,6 +14,9 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.maps.GeoApiContext;
+import com.google.maps.GeocodingApi;
+import com.google.maps.model.GeocodingResult;
 import edu.illinois.models.Post;
 import edu.illinois.models.PostDao;
 import edu.illinois.models.Trend;
@@ -26,19 +29,10 @@ import edu.stanford.nlp.sentiment.SentimentCoreAnnotations.SentimentAnnotatedTre
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.CoreMap;
 import org.springframework.beans.factory.annotation.Autowired;
-import twitter4j.Twitter;
-import twitter4j.TwitterFactory;
+import twitter4j.*;
+import twitter4j.api.PlacesGeoResources;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
-import twitter4j.FilterQuery;
-import twitter4j.StallWarning;
-import twitter4j.Status;
-import twitter4j.StatusDeletionNotice;
-import twitter4j.StatusListener;
-import twitter4j.TwitterException;
-import twitter4j.TwitterObjectFactory;
-import twitter4j.TwitterStream;
-import twitter4j.TwitterStreamFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
 public class TweetStream {
@@ -46,6 +40,7 @@ public class TweetStream {
 	private TrendDao _trendDao;
 
 	private TwitterStream twitterStream;
+	private GeoApiContext geoApiContext;
 	private FilterQuery tweetFilterQuery;
 	private StatusListener listener;
 
@@ -58,6 +53,7 @@ public class TweetStream {
 		_trendDao = dao2;
 
 		twitterStream = new TwitterStreamFactory(conf).getInstance();
+		this.geoApiContext = new GeoApiContext().setApiKey("AIzaSyDPj7izY2iXndIdHy1H4n4DNk6HfmXBR-w");
 		listener = new StatusListener() {
 			int count = 0;
 
@@ -72,15 +68,11 @@ public class TweetStream {
 				int sentimentscore = findSentiment(withoutPunctuation);
 
 				int tweet_id = (int) status.getId();
-				String location = status.getUser().getLocation();
 
 				// Get timestamp
 				java.sql.Timestamp timestamp = new java.sql.Timestamp(status.getCreatedAt().getTime());
 
 				ArrayList<Trend> postTrends = new ArrayList<Trend>();
-
-				//insert into database here
-				// TODO: Location latidude longitude; reverse geocode?
 
 				Iterable<Trend> trends = _trendDao.findAll();
 				for (Trend trend : trends) {
@@ -91,9 +83,28 @@ public class TweetStream {
 
 				// Only save if it had some trends
 				if (postTrends.size() > 0) {
-					Post p = new Post(timestamp, withoutPunctuation, sentimentscore, 0, 0, "twitter", postTrends);
-					_postDao.save(p);
-					System.out.println(status.getId() + status.getText() + status.getGeoLocation() + status.getUser().getLocation());
+					double latitude = 0;
+					double longitude = 0;
+
+					if(status.getGeoLocation() != null) {
+						latitude = status.getGeoLocation().getLatitude();
+						longitude = status.getGeoLocation().getLongitude();
+					} else {
+						try {
+							GeocodingResult[] results =  GeocodingApi.geocode(geoApiContext,
+                                    status.getUser().getLocation()).await();
+							latitude = results[0].geometry.location.lat;
+							longitude = results[0].geometry.location.lng;
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+
+					if (latitude != 0 || longitude != 0){
+						Post p = new Post(timestamp, withoutPunctuation, sentimentscore, (float) latitude, (float) longitude, "twitter", postTrends);
+						_postDao.save(p);
+						System.out.println(status.getId() + status.getText() + status.getGeoLocation() + status.getUser().getLocation());
+					}
 				}
 			}
 			public void onDeletionNotice(StatusDeletionNotice statusDeletionNotice) {
