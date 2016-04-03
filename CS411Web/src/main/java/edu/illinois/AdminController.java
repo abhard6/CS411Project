@@ -26,7 +26,7 @@ public class AdminController {
 
     private TweetStream tweetStream;
 
-    @RequestMapping("/")
+    @RequestMapping("/admin")
     public String index(Model model) {
         model.addAttribute("entries", _postDao.findAll());
         return "index";
