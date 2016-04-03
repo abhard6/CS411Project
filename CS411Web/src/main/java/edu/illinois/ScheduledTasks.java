@@ -2,6 +2,12 @@ package edu.illinois;
 
 /**
  * Created by nprince on 3/31/16.
+ *
+ * Contains scheduled events (using cron style)
+ *
+ * Current events include:
+ *  deleting outdated posts and trends daily
+ *  adding new posts and trends daily
  */
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;

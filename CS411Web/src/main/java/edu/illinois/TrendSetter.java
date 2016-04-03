@@ -11,8 +11,17 @@ import twitter4j.conf.Configuration;
 
 /**
  * Created by nprince on 3/31/16.
+ *
+ * A helper class to gather current trending terms from twitter and store them in the databse.
  */
 public class TrendSetter {
+
+    /**
+     * Gathers trending terms and stores them in the db
+     * @param conf The twitter configuration. Autowire a TwitterService to the controller and use it's method to get the twitter conf
+     * @param _trendDao The trend data access object. This can also be autowired to a controller.
+     * @throws TwitterException
+     */
     public static void SetTrends(Configuration conf, TrendDao _trendDao) throws TwitterException {
         TrendsResources trends = new TwitterFactory(conf).getInstance().trends();
 

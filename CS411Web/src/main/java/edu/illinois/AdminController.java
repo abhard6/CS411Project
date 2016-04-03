@@ -26,12 +26,23 @@ public class AdminController {
 
     private TweetStream tweetStream;
 
+    /**
+     * Serves the admin page. All posts are added to the variable "entries" to
+     * be used by thymeleaf in the templated webpage "admin.html"
+     * @param model
+     * @return
+     */
     @RequestMapping("/admin")
     public String index(Model model) {
         model.addAttribute("entries", _postDao.findAll());
         return "index";
     }
 
+    /**
+     * Triggers the deletion of a single post
+     * @param body the body of the post, should contain an id to delete
+     * @return
+     */
     @RequestMapping(value = "/delete" , method = RequestMethod.POST)
     public @ResponseBody
     boolean delete(@RequestBody Map<String,String> body) {
@@ -41,6 +52,11 @@ public class AdminController {
         return true;
     }
 
+    /**
+     * Triggers the update of a single post
+     * @param body should contain an id of the post to update, and all of the fields
+     * @return
+     */
     @RequestMapping(value = "/update" , method = RequestMethod.POST)
     public @ResponseBody
     boolean update(@RequestBody Map<String,String> body) {
@@ -58,6 +74,11 @@ public class AdminController {
         return true;
     }
 
+    /**
+     * Causes the backend to start collecting posts.
+     * @param body
+     * @return
+     */
     @RequestMapping(value = "/collect" , method = RequestMethod.POST)
     public @ResponseBody
     boolean collect(@RequestBody Map<String,String> body) {
@@ -73,6 +94,11 @@ public class AdminController {
         return true;
     }
 
+    /**
+     * Causes the backend to stop collecting posts.
+     * @param body
+     * @return
+     */
     @RequestMapping(value = "/stop" , method = RequestMethod.POST)
     public @ResponseBody
     boolean stop(@RequestBody Map<String,String> body) {

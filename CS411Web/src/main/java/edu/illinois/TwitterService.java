@@ -7,6 +7,9 @@ import twitter4j.conf.ConfigurationBuilder;
 
 /**
  * Created by nprince on 3/31/16.
+ *
+ * Allows the twitter configuration, and any other necessary twitter dependencies
+ * to be autowired.
  */
 @Component("TwitterService")
 public class TwitterService {
