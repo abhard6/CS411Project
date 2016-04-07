@@ -32,6 +32,10 @@ public class Trend {
     public void setValue(String value) {
         this.value = value;
     }
+    
+    public Timestamp getTimestamp() {
+    	return createdAt;
+    }
 
     public Trend(String value) {
         this.value = value;

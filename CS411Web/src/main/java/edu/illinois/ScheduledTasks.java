@@ -30,13 +30,20 @@ public class ScheduledTasks {
     @Autowired
     private TrendDao _trendDao;
 
+//Whre is it initialized???
     @Autowired
     private TwitterService twitterService;
+    
+    @Autowired
+    private FacebookService facebookService;
+    
+    //What is @Autowired??
+    private FbPostSearch fbPostSearch;
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
     @Scheduled(cron="0 0 9 * * *" )
-    public void clearOldTweets() {
+    public void clearOldPosts() {
         _postDao.deleteOlderThan(getAWeekAgo());
 
         System.out.println("DELETED SOME SHIT TWEETS");
@@ -65,4 +72,13 @@ public class ScheduledTasks {
             e.printStackTrace();
         }
     }
+    @Scheduled(cron="0 0 9 * * *")
+    public void getFacebookTrendingPostsToday()
+    {
+    	//Set up new instance and connection each time?
+    	fbPostSearch = new FbPostSearch();
+    	facebookService = new FacebookService();
+    	fbPostSearch.startFbSearch(_postDao, _trendDao, facebookService.getConf());
+    }
+    
 }

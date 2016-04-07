@@ -28,6 +28,12 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.sentiment.SentimentCoreAnnotations.SentimentAnnotatedTree;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.CoreMap;
+import facebook4j.Facebook;
+import facebook4j.FacebookException;
+import facebook4j.FacebookFactory;
+import facebook4j.ResponseList;
+import facebook4j.auth.AccessToken;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import twitter4j.*;
 import twitter4j.api.PlacesGeoResources;
@@ -43,9 +49,9 @@ public class TweetStream {
 	private GeoApiContext geoApiContext;
 	private FilterQuery tweetFilterQuery;
 	private StatusListener listener;
+	
+	private RefinePost refinePost = new RefinePost();
 
-	public static Set<Character> blacklist = new HashSet<Character>();
-	public static Set <Character>whitespaceBlacklist = new HashSet<Character>();
 
 	public TweetStream(Configuration conf, PostDao dao, TrendDao dao2) throws TwitterException, InterruptedException{
 
@@ -59,13 +65,13 @@ public class TweetStream {
 
 
 			public void onStatus(Status status) {
-				String withoutEmojis = removeEmojiAndSymbolFromString(status.getText());
+				String withoutEmojis = refinePost.removeEmojiAndSymbolFromString(status.getText());
 
-				String strippedtweet = stripTweet(withoutEmojis);
+				String strippedtweet = refinePost.stripPost(withoutEmojis);
 
-				String withoutPunctuation = removePunctuation(strippedtweet);
+				String withoutPunctuation = refinePost.removePunctuation(strippedtweet);
 
-				int sentimentscore = findSentiment(withoutPunctuation);
+				int sentimentscore = refinePost.findSentiment(withoutPunctuation);
 
 				int tweet_id = (int) status.getId();
 
@@ -80,8 +86,10 @@ public class TweetStream {
 						postTrends.add(trend);
 					}
 				}
-
-				// Only save if it had some trends
+				
+				//Getting info from Facebook based on trends
+				
+							// Only save if it had some trends
 				if (postTrends.size() > 0) {
 					double latitude = 0;
 					double longitude = 0;
@@ -141,11 +149,7 @@ public class TweetStream {
 
 
 		// FilterQuery fq = new FilterQuery();
-
-
 		//fq.track(keywords);
-
-
 		//twitterStream.sample();
 	}
 
@@ -160,152 +164,4 @@ public class TweetStream {
 	}
 
 
-	public static String removeEmojiAndSymbolFromString(String content){
-		String resultStr = "";
-		String utf8tweet = "";
-
-		try {
-			byte[] utf8Bytes = content.getBytes("UTF-8");
-			utf8tweet = new String(utf8Bytes, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-
-		Pattern unicodeOutliers =
-				Pattern.compile(
-						"[\ud83c\udc00-\ud83c\udfff]|[\ud83d\udc00-\ud83d\udfff]|[\u2600-\u27ff]",
-						Pattern.UNICODE_CASE |
-						Pattern.CANON_EQ |
-						Pattern.CASE_INSENSITIVE
-						);
-		Matcher unicodeOutlierMatcher = unicodeOutliers.matcher(utf8tweet);
-		utf8tweet = unicodeOutlierMatcher.replaceAll(" ");
-
-		resultStr = utf8tweet.replaceAll("'", "''");
-
-		return resultStr;
-	}
-
-	public static String removePunctuation(String original) {
-		String result = "";
-		char[] chars = original.toCharArray();
-		for(char character : chars) {
-			//Check if we need to add whitespace due to a banned char
-			if(whitespaceBlacklist.contains(character)) {
-				result += " ";
-			} //Now check if our char is a non-whitespace banned one (mostly just apostrophes) 
-			else if(!blacklist.contains(character)) {
-				result += character;
-			} 
-		}
-		return result;
-	}
-
-
-	//Don't have to add in the spaces if it's just an individual word - can do it like this!
-	public static String removePunctuationWord(String original) {
-		String result = "";
-		char[] chars = original.toCharArray();
-		for(char character : chars) {
-			if(character >= 'a' && character <= 'z') {
-				result += character;
-			}
-		}
-		return result;
-	}
-
-	public static void initBlacklist() {
-
-		Character[] blackChars = {'\'','’'};
-		Character[] whitespaceBlackChars = {'.',',','\"',';',':','!','£','$','%','^','&','*','(',')','+','=','?','<','>','/','\\','|','{','}','[',']','?','~','`','€','¬','¦','-','_','ã','©'};
-		for(Character character : blackChars) {
-			blacklist.add(character);
-		}
-		for(Character character : whitespaceBlackChars) {
-			whitespaceBlacklist.add(character);
-		}
-	} 	
-
-	public static String stripTweet(String original) {
-
-		//System.out.println("Stripping: "+original);
-
-		//Convert to lowercase
-		String originalLC = original.toLowerCase();
-
-		String[] split = originalLC.split("\\s+");
-
-		String tempResult = "";
-		for(String tokenWithPunctuation : split) {
-			String token = removePunctuationWord(tokenWithPunctuation);
-
-			//System.out.println("Considering token "+token);
-
-			if(token.equals("")) {
-				System.out.println("Empty token");
-				continue; // redundant also
-			}
-
-			if(token.equals("rt")) {
-				//System.out.println("How is rt slipping past? We just caught one");
-				continue; //redundant with length check
-			}
-
-			//Remove the hash from hashtags
-			//TODO: we DEFINITELY want to keep hashtags semantically separate from words!!! TODO TODO TODO
-			if(tokenWithPunctuation.charAt(0) == '#') {
-				//System.out.println("Found a hashtag, keepin the word");
-				token = token.subSequence(1, token.length()).toString(); //Now it's subejct to below checks
-			}   			
-
-			//Remove links
-			//TODO: Maybe we want to look at links!			
-			if(token.length() >= 4 && (token.substring(0, 3).equals("www") || token.substring(0, 4).equals("http"))) {
-				//System.out.println("It's a link - why are these getting through!?");
-				continue;
-			}
-
-			//Remove usernames
-			//TODO: Maybe we want to look at usernames!
-			if(tokenWithPunctuation.charAt(0) == '@') {
-				//System.out.println("Found a username, skipping it");
-				continue;
-			}
-
-			//System.out.println("Adding the token "+token);
-			tempResult += token+" ";
-		}
-
-		//System.out.println("Current result is: "+tempResult);
-
-		return tempResult;
-	}
-	public static int findSentiment(String line) {
-
-		Properties props = new Properties();
-		props.setProperty("annotators", "tokenize, ssplit, parse, sentiment");
-		props.put("sentiment.model", "model.ser.gz");
-		StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
-		int mainSentiment = 0;
-		if (line != null && line.length() > 0) {
-			int longest = 0;
-			Annotation annotation = pipeline.process(line);
-			for (CoreMap sentence : annotation.get(CoreAnnotations.SentencesAnnotation.class)) {
-				Tree tree = sentence.get(SentimentAnnotatedTree.class);
-				int sentiment = RNNCoreAnnotations.getPredictedClass(tree);
-				String partText = sentence.toString();
-				if (partText.length() > longest) {
-					mainSentiment = sentiment;
-					longest = partText.length();
-				}
-
-			}
-		}
-		//			        if (mainSentiment == 2 || mainSentiment > 4 || mainSentiment < 0) {
-			//			            return 0 ;
-			//			        }
-
-		return mainSentiment;
-
-	}
 }
