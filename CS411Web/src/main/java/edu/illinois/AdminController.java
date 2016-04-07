@@ -91,7 +91,7 @@ public class AdminController {
 
         try {
             tweetStream = new TweetStream(twitterService.getConf(), _postDao, _trendDao);
-            //tweetStream.start();
+            tweetStream.start();
             facebookService = new FacebookService();
         	fbPostSearch = new FbPostSearch();
         	fbPostSearch.startFbSearch(_postDao, _trendDao, facebookService.getConf());
