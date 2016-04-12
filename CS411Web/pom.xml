@@ -97,6 +97,12 @@
 			<artifactId>google-maps-services</artifactId>
 			<version>0.1.12</version>
 		</dependency>
+		<dependency>
+  			<groupId>org.facebook4j</groupId>
+  			<artifactId>facebook4j-core</artifactId>
+  			<version>[2.4,)</version>
+		</dependency>
+		
 	</dependencies>
 	
 	<build>

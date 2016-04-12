@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+      <title>map</title>
+      <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+    <script src="/build/heatmap.js"></script>
+    <script src="/plugins/leaflet-heatmap.js"></script>
+      <style>
+      body, html { margin:0; padding:0; height:100%;}
+      body { font-family:sans-serif; }
+      body * { font-weight:200;}
+      h1 { position:absolute; background:white; padding:10px;}
+      #map { height:100%; }
+      .leaflet-container {
+        background: rgba(0,0,0,.8) !important;
+      }
+      h1 { position:absolute; background:black; color:white; padding:10px; font-weight:200; z-index:10000;}
+      #all-examples-info { position:absolute; background:white; font-size:16px; padding:20px; top:100px; width:350px; line-height:150%; border:1px solid rgba(0,0,0,.2);}
+    </style>
+    </head>
+    <body>
+        <h1>map</h1>
+        <div id="map"></div>
+        <script type="text/javascript" src="/plugins/jquery.js"></script>
+        <script>
+          //$("button").click(function(){
+          var objs = [];
+          //objs.push({lat: 24.6408, lng:46.7728, count: 3});
+          console.log("load json start")
+          $.getJSON("/data/tweeter.json",function(obj){
+              $.each(obj, function(key,val){
+                  //objs.push({lat: 24.6408, lng:46.7728, count: 3});
+                  console.log(key)
+                  console.log(val)
+                  objs.push({
+                      lat: val.lat,
+                      lng: val.lng,
+                      count: val.count
+                  });
+              });
+
+              console.log("load json end")
+              var newData = {
+                max: 8,
+                data: objs
+              };
+              layer.setData(newData);
+              console.log("heat map data set in the json callback")
+          });
+          
+
+          window.onload = function() {
+            var baseLayer = L.tileLayer(
+              'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+                attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
+                maxZoom: 18
+              }
+            );
+
+            var testData = {
+              max: 8,
+              data: objs//[{lat: 24.6408, lng:46.7728, count: 3},{lat: 50.75, lng:-1.55, count: 3}],{lat: 52.6333, lng:1.75, count: 2},{lat: 48.15, lng:9.4667, count: 2},{lat: 52.35, lng:4.9167, count: 1},{lat: 60.8, lng:11.1, count: 1},{lat: 43.561, lng:-116.214, count: 1}]
+            };
+            
+            var cfg = {
+              // radius should be small ONLY if scaleRadius is true (or small radius is intended)
+              "radius": 2,
+              "maxOpacity": .8, 
+              // scales the radius based on map zoom
+              "scaleRadius": true, 
+              // if set to false the heatmap uses the global maximum for colorization
+              // if activated: uses the data maximum within the current map boundaries 
+              //   (there will always be a red spot with useLocalExtremas true)
+              "useLocalExtrema": true,
+              // which field name in your data represents the latitude - default "lat"
+              latField: 'lat',
+              // which field name in your data represents the longitude - default "lng"
+              lngField: 'lng',
+              // which field name in your data represents the data value - default "value"
+              valueField: 'count'
+            };
+
+
+            var heatmapLayer = new HeatmapOverlay(cfg);
+
+            var map = new L.Map('map', {
+              center: new L.LatLng(25.6586, -80.3568),
+              zoom: 4,
+              layers: [baseLayer, heatmapLayer]
+            });
+
+            heatmapLayer.setData(testData);
+            console.log("heat map data set in the windows.onload()")
+            // make accessible for debugging
+            layer = heatmapLayer;
+          };
+        </script>
+    </body>
+</html>

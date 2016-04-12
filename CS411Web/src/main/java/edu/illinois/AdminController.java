@@ -23,7 +23,12 @@ public class AdminController {
     @Autowired
     @Qualifier("TwitterService")
     private TwitterService twitterService;
+    
+    @Autowired
+    @Qualifier("FacebookService")
+    private FacebookService facebookService;
 
+    private FbPostSearch fbPostSearch;
     private TweetStream tweetStream;
 
     /**
@@ -87,6 +92,10 @@ public class AdminController {
         try {
             tweetStream = new TweetStream(twitterService.getConf(), _postDao, _trendDao);
             tweetStream.start();
+            facebookService = new FacebookService();
+        	fbPostSearch = new FbPostSearch();
+        	fbPostSearch.startFbSearch(_postDao, _trendDao, facebookService.getConf());
+        
         } catch (Exception e) {
             e.printStackTrace();
         }
