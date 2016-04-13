@@ -9,44 +9,38 @@ import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 import java.util.Collection;
 
-@Entity
-@Table(name="Post")
 public class Post {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+
     private long id;
 
-
-    @NotNull
     private Timestamp timestamp;
 
-    @NotNull
-    @Size(min=1, max=500)
     private String content;
 
-    @NotNull
     private int sentiment;
 
     public float latitude;
     public float longitude;
 
 
-    @NotNull
     public String source;
-
-    @ManyToMany(targetEntity = edu.illinois.models.Trend.class)
-    @JoinTable(name="TrendedPost",
-            joinColumns=
-            @JoinColumn(name = "post_id", referencedColumnName = "id"),
-            inverseJoinColumns=
-            @JoinColumn(name = "trend_id", referencedColumnName = "value")
-    )
     public Collection<Trend> trends;
 
     public Post() { }
 
     public Post(long id) {
         this.id = id;
+    }
+
+    public Post(long id, Timestamp timestamp, String content, int sentiment, float latitude, float longitude, String source, Collection<Trend> trends) {
+        this.id = id;
+        this.timestamp = timestamp;
+        this.content = content;
+        this.sentiment = sentiment;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.source = source;
+        this.trends = trends;
     }
 
     public Post(Timestamp timestamp, String content, int sentiment, float latitude, float longitude, String source, Collection<Trend> trends) {
@@ -59,6 +53,8 @@ public class Post {
         this.trends = trends;
     }
 
+
+    public void setId(long id) { this.id = id; }
     public long getId() {
         return id;
     }

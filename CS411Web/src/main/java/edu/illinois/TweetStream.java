@@ -110,7 +110,7 @@ public class TweetStream {
 
 					if (latitude != 0 || longitude != 0){
 						Post p = new Post(timestamp, withoutPunctuation, sentimentscore, (float) latitude, (float) longitude, "twitter", postTrends);
-						_postDao.save(p);
+						_postDao.insert(p);
 						System.out.println(status.getId() + status.getText() + status.getGeoLocation() + status.getUser().getLocation());
 					}
 				}

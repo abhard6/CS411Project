@@ -32,7 +32,7 @@ public class TrendSetter {
             // Only save new trends
             if (_trendDao.findByValue(t.getName()).size() == 0) {
                 edu.illinois.models.Trend myTrend = new edu.illinois.models.Trend(t.getName());
-                _trendDao.save(myTrend);
+                _trendDao.insert(myTrend);
             }
         }
     }

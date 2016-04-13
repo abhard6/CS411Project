@@ -148,7 +148,7 @@ public class FbPostSearch {
 								int sentimentscore = refinePost.findSentiment(withoutPunctuation);
 
 								Post p = new Post(timestamp, withoutPunctuation, sentimentscore, (float) latitude, (float) longitude, "facebook", postTrends);
-								_postDao.save(p);
+								//_postDao.save(p);
 								System.out.println(post.getId() + post.getMessage() + post.getPlace() + post.getMessage());
 								System.out.println("Created a post!!!");
 							}

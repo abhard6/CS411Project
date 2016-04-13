@@ -23,7 +23,7 @@ public class AdminController {
     @Autowired
     @Qualifier("TwitterService")
     private TwitterService twitterService;
-    
+
     @Autowired
     @Qualifier("FacebookService")
     private FacebookService facebookService;
@@ -52,7 +52,7 @@ public class AdminController {
     public @ResponseBody
     boolean delete(@RequestBody Map<String,String> body) {
         long id = Long.parseLong(body.get("id"));
-        _postDao.delete(id);
+        _postDao.deleteById(id);
 
         return true;
     }
@@ -66,7 +66,7 @@ public class AdminController {
     public @ResponseBody
     boolean update(@RequestBody Map<String,String> body) {
         long id = Long.parseLong(body.get("id"));
-        Post p = _postDao.findOne(id);
+        Post p = _postDao.findById(id).get(0);
 
         p.setContent(body.get("content"));
         p.setLatitude(Float.parseFloat(body.get("latitude")));
@@ -74,7 +74,7 @@ public class AdminController {
         p.setSentiment(Integer.parseInt(body.get("sentiment")));
         p.setSource(body.get("source"));
 
-        _postDao.save(p);
+        _postDao.insert(p);
 
         return true;
     }
@@ -95,7 +95,7 @@ public class AdminController {
             facebookService = new FacebookService();
         	fbPostSearch = new FbPostSearch();
         	fbPostSearch.startFbSearch(_postDao, _trendDao, facebookService.getConf());
-        
+
         } catch (Exception e) {
             e.printStackTrace();
         }

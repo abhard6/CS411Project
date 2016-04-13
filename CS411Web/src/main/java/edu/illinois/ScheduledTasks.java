@@ -30,7 +30,6 @@ public class ScheduledTasks {
     @Autowired
     private TrendDao _trendDao;
 
-//Whre is it initialized???
     @Autowired
     private TwitterService twitterService;
     
@@ -42,12 +41,12 @@ public class ScheduledTasks {
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
-    @Scheduled(cron="0 0 9 * * *" )
-    public void clearOldPosts() {
-        _postDao.deleteOlderThan(getAWeekAgo());
-
-        System.out.println("DELETED SOME SHIT TWEETS");
-    }
+//    @Scheduled(cron="0 0 9 * * *" )
+//    public void clearOldPosts() {
+//        _postDao.deleteOlderThan(getAWeekAgo());
+//
+//        System.out.println("DELETED SOME SHIT TWEETS");
+//    }
 
     private Timestamp getAWeekAgo() {
         Calendar cal = Calendar.getInstance();

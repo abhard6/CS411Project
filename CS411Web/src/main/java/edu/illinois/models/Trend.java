@@ -11,19 +11,12 @@ import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
-@Entity
-@Table(name="Trend")
 public class Trend {
-    @Id
     private String value;
 
-    @NotNull
     private Timestamp createdAt;
-
-    @ManyToMany(mappedBy = "trends")
-    private Collection<Post> posts;
-
 
     public String getValue() {
         return value;
@@ -39,14 +32,19 @@ public class Trend {
 
     public Trend(String value) {
         this.value = value;
-        this.posts = new ArrayList<Post>();
         this.createdAt = new Timestamp(System.currentTimeMillis());
     }
 
     public Trend() {}
 
+    /**
+     * Get all of the posts associated with this trend
+     *    NOTE: This is pulled from the DB to save speed, as not every time we need a trend do we need all of its posts
+     * @return
+     */
     public Collection<Post> getPosts() {
-        return posts;
-    }
+        PostDao dao = new PostDao();
 
+        return dao.findByTrend(value);
+    }
 }
