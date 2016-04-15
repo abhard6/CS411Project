@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>map</title>
+    <link rel="stylesheet" href="leaflet.css" />
+    <script src="leaflet.js"></script>
+    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.2.min.js"
+        integrity="sha256-36cp2Co+/62rEAAYHLmRCPIych47CvdM+uTBJwSzWjI=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="d3.layout.cloud.js"></script>
+    <script src="./heatmap.js"></script>
+    <script src="./leaflet-heatmap.js"></script>
+    <style>
+      body, html { margin:0; padding:0; height:100%;}
+      body { font-family:sans-serif; }
+      body * { font-weight:200;}
+      h1 { position:absolute; background:white; padding:10px;}
+      #map { height:100%; }
+      .leaflet-container {
+        background: rgba(0,0,0,.8) !important;
+      }
+      h1 { position:absolute; background:black; color:white; padding:10px; font-weight:200; z-index:10000;}
+      #all-examples-info { position:absolute; background:white; font-size:16px; padding:20px; top:100px; width:350px; line-height:150%; border:1px solid rgba(0,0,0,.2);}
+    </style>
+  </head>
+  <body>
+    <h1>map</h1>
+    <div id="map"></div>
+    <script>
+      var baseLayer = L.tileLayer(
+        'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+          attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
+          maxZoom: 18
+        }
+      );
+
+      var cfg = {
+        // radius should be small ONLY if scaleRadius is true (or small radius is intended)
+        "radius": 2,
+        "maxOpacity": .8, 
+        // scales the radius based on map zoom
+        "scaleRadius": true, 
+        // if set to false the heatmap uses the global maximum for colorization
+        // if activated: uses the data maximum within the current map boundaries 
+        //   (there will always be a red spot with useLocalExtremas true)
+        "useLocalExtrema": true,
+        // which field name in your data represents the latitude - default "lat"
+        latField: 'lat',
+        // which field name in your data represents the longitude - default "lng"
+        lngField: 'lng',
+        // which field name in your data represents the data value - default "value"
+        valueField: 'count'
+      };
+
+
+      var heatmapLayer = new HeatmapOverlay(cfg);
+      var map = new L.Map('map', {
+        center: new L.LatLng(25.6586, -80.3568),
+        zoom: 4,
+        layers: [baseLayer, heatmapLayer]
+      });
+
+      var fill = d3.scale.category20();
+
+       var words = [];
+       //update when zoom in/out 
+      map.on('zoomend', function(e) {
+        var bounds = map.getBounds();
+        var ne = bounds.getNorthEast(); // LatLng of the north-east corner
+        var sw = bounds.getSouthWest(); // LatLng of the south-west corder
+        var nw = bounds.getNorthWest(); // LatLng of the north-west corner
+        var se = bounds.getSouthEast(); // LatLng of the south-east corder
+
+        var wordlist = [];
+          for (i=0; i<words.length; i++){
+            if (words[i].lat>sw.lat && words[i].lat <nw.lat && words[i].lng>sw.lng && words[i].lng<se.lng){
+              wordlist.push({text:words[i].word,size:words[i].count*10});
+            }
+          };
+          d3.layout.cloud().size([500, 500])
+            .words(wordlist)
+            .padding(5)
+            .rotate(function() { return ~~(Math.random() * 2) * 90; })
+            .font("Impact")
+            .fontSize(function(d) { return d.size; })
+            .on("end", drawUpdate)
+            .start();
+        });
+        
+      window.onload = function() {
+        //get lat and lng from current zoom map
+        var bounds = map.getBounds();
+        var ne = bounds.getNorthEast(); // LatLng of the north-east corner
+        var sw = bounds.getSouthWest(); // LatLng of the south-west corder
+        var nw = bounds.getNorthWest(); // LatLng of the north-west corner
+        var se = bounds.getSouthEast(); // LatLng of the south-east corder
+
+        $.getJSON("./wordfreq.json",function(obj){
+          //var words = [];
+          $.each(obj, function(key,val){
+              //console.log(key)
+              //console.log(val)
+              words.push({
+                  word: val.word,
+                  lat: val.lat,
+                  lng: val.lng,
+                  count: val.count
+              });
+          });
+
+          //data load completed
+
+          //update heatmap
+          var newData = {
+            max: 8,
+            data: words
+          };
+          heatmapLayer.setData(newData);
+
+          //wordmap script
+          var wordlist = [];
+          for (i=0; i<words.length; i++){
+            if (words[i].lat>sw.lat && words[i].lat <nw.lat && words[i].lng>sw.lng && words[i].lng<se.lng){
+              wordlist.push({text:words[i].word,size:words[i].count*10});
+            }
+          };
+          d3.layout.cloud().size([500, 500])
+            .words(wordlist)
+            .padding(5)
+            .rotate(function() { return ~~(Math.random() * 2) * 90; })
+            .font("Impact")
+            .fontSize(function(d) { return d.size; })
+            .on("end", draw)
+            .start();
+        });
+      }
+
+      function draw(words) {
+        d3.select("body").append("svg")
+          .attr("width", 500)
+          .attr("height", 500)
+          .append("g")
+          .attr("transform", "translate(150,150)")
+          .selectAll("text")
+          .data(words)
+          .enter().append("text")
+          .style("font-size", function(d) { return d.size + "px"; })
+          .style("font-family", "Impact")
+          .style("fill", function(d, i) { return fill(i); })
+          .attr("text-anchor", "middle")
+          .attr("transform", function(d) {
+            return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+          })
+          .text(function(d) { return d.text; });
+      }
+
+   
+      function drawUpdate(words){
+          //delete svg
+          d3.selectAll('svg > g > *').remove();
+       d3.layout.cloud().size([500, 500])
+          .words(words)
+          .padding(5)
+          .rotate(function() { return ~~(Math.random() * 2) * 90; })
+          .font("Impact")
+          .fontSize(function(d) { return d.size; })
+          .start();
+          
+          d3.select("svg")
+          .selectAll("g")
+          .attr("transform", "translate(150,150)")
+          .selectAll("text")
+          .data(words).enter().append("text")
+          .style("font-size", function(d) { return d.size + "px"; })
+          .style("font-family", "Impact")
+          .style("fill", function(d, i) { return fill(i); })
+          .attr("transform", function(d) {
+            return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+          })
+          .text(function(d) { return d.text; });
+      } 
+    </script>
+  </body>
+</html>
