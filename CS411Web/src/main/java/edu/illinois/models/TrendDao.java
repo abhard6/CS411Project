@@ -18,6 +18,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Component("TrendDao")
 public class TrendDao extends BasicDao<Trend>{
@@ -29,7 +30,9 @@ public class TrendDao extends BasicDao<Trend>{
     protected Trend singleResult(ResultSet r) {
         try {
             String value = r.getString("value");
-            return new Trend(value);
+            //Timestamp created = r.getTimestamp("created_at");
+            //Timestamp end = r.getTimestamp("trending_till");
+            return new Trend(value); // Update constructor
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -37,6 +40,13 @@ public class TrendDao extends BasicDao<Trend>{
         return null;
     }
 
+    public List<Trend> findAll()
+    {
+    	ResultSet r = mySql.executeQuery("SELECT value FROM TREND");
+    	return fromResultSet(r);
+    	
+    }
+    
     public List<Trend> findByPost(long post_id) {
         ResultSet r = mySql.executeQuery("SELECT * FROM " + tableName + " " +
                 "INNER JOIN " +
@@ -64,5 +74,41 @@ public class TrendDao extends BasicDao<Trend>{
                     "(SELECT id FROM Post WHERE id=" + p.getId() + ")," +
                     "(SELECT value FROM " + tableName + " WHERE value=\"" + t.getValue() + "\"))");
         }
+    }
+    
+    public List<MapDetail> wordListForTrend(String val)
+    {
+    	ResultSet r = mySql.executeQuery("SELECT id, latitude, longitude, sentiment " +
+    						"FROM post JOIN trended_post ON post.id = trended_post.post_id " +
+    						"WHERE trended_post.trend_id = \"" + val + "\";");
+    	List<MapDetail> mapDetailResult = fromResultSetMap(r);
+    	return mapDetailResult;
+    }
+    
+    private List<MapDetail> fromResultSetMap(ResultSet r) {
+        ArrayList<MapDetail> results = new ArrayList<MapDetail>();
+        try {
+            while (r.next()) {
+                results.add(singleResultMap(r));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return results;
+    }
+    
+    protected MapDetail singleResultMap(ResultSet r) {
+        try {
+            int value = r.getInt(1);
+            float lat = r.getFloat(2);
+            float lon = r.getFloat(3);
+            int sentiment = r.getInt(4);
+            return new MapDetail(value,lat,lon,sentiment); 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 } // class TrendDao

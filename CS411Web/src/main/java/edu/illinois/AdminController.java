@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import twitter4j.conf.Configuration;
 
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -94,7 +95,7 @@ public class AdminController {
             tweetStream.start();
             facebookService = new FacebookService();
         	fbPostSearch = new FbPostSearch();
-        	fbPostSearch.startFbSearch(_postDao, _trendDao, facebookService.getConf());
+        	//fbPostSearch.startFbSearch(_postDao, _trendDao, facebookService.getConf());
 
         } catch (Exception e) {
             e.printStackTrace();

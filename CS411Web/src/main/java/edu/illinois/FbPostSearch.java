@@ -1,5 +1,10 @@
 package edu.illinois;
 
+/**
+ * Created by banumuthukumar on 4/2/16.
+ */
+
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -60,18 +65,25 @@ public class FbPostSearch {
 		facebook = new FacebookFactory(conf).getInstance();
 
 		// Need to update!! 
-		String ats = "EAACEdEose0cBAPFNIlKLjglmkJnFM82rVIA2xSogVZCyXsgr0mah2cGJpuMkvDyTXrrlGClM3HyZCBkCNDHlZBwpBRdOQ84sIXjqEYUt3EOVBQr6cLLYXoo8SS2WY4xupJrQzXXoxV7HTIWY6kQczMZC2zbXkMdPu4XUBSC10AZDZD";
+		//String ats = "EAACEdEose0cBAPFNIlKLjglmkJnFM82rVIA2xSogVZCyXsgr0mah2cGJpuMkvDyTXrrlGClM3HyZCBkCNDHlZBwpBRdOQ84sIXjqEYUt3EOVBQr6cLLYXoo8SS2WY4xupJrQzXXoxV7HTIWY6kQczMZC2zbXkMdPu4XUBSC10AZDZD";
 
-		String APP_ID = "1032340876803396"; 
-		String APP_SECRET = "86256309150d448a82abeead78cfc5f7";
+		String APP_ID = "968228206588362"; 
+		String APP_SECRET = "c46ea5ba358b2f7374b0302b060e4797";
 		facebook.setOAuthAppId(APP_ID, APP_SECRET);
 		//AccessToken at = facebook.getOAuthAccessToken();
 		//facebook.setOAuthAppId("", "");
-		AccessToken at = new AccessToken(ats);
-
+		//AccessToken at = new AccessToken(ats);
+		//AccessToken at = facebook.getOAuthAccessToken();	
 		// Set access token.
-		facebook.setOAuthAccessToken(at);
+//		try {
+//			AccessToken atNew = facebook.extendTokenExpiration(ats);
+//			facebook.setOAuthAccessToken(atNew);
 
+//		} catch (FacebookException e1) {
+			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+		
 		//For every trend, search Facebook
 		for (Trend trend : trends) {
 			System.out.println("Working on trend for fb : " + trend.getValue());

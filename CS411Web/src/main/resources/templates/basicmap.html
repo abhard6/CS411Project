@@ -19,7 +19,6 @@
       type="text/css"></link>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/6.1.5/bootstrap-slider.min.js"></script>
 
-<!-- Our stylesheet -->
 <link rel="stylesheet" href="basicmap.css"></link>
 
 <!--Stuff for map-->
@@ -58,7 +57,6 @@
                 <h4 class="list-group-item"> Favorites
                     <i style="color:red" class="pull-right glyphicon glyphicon-heart-empty"></i>
                 </h4>
-                <a class="favorite">#yolo #whatever, latitude:50.12342, longitude:42.21034</a>
             </div>
             <h5 class="list-group-item">Trending:
                 <span class="label label-default">Inactive</span>
@@ -66,6 +64,26 @@
             </h5>
             <h5 class="list-group-item"><button class="btn btn-sm pull-right" id="search">Search</button>
             </h5>
+            <div id="trends">
+	            <h5 class="list-group-item">Trending:
+	                <span class="label label-default">Inactive</span>
+	                <span class="label label-success">Active</span>
+	            </h5>
+    	        <h5 class="list-group-item">Choose a trend:
+        	    </h5>
+        	    <div id="trendslist"> Displaying trends here: 
+                	<input type="text" name="country" id="autocomplete"/>
+                	<div th:each="trend : ${alltrends}" class="row">
+                	    <div class="col-xs-10">
+                	    	<input th:value="${trend.value}" class="id form-control" placeholder="id" type="text"/>
+                	    </div>
+                	    <div class="col-xs-1">
+							<input type="checkbox" class="select" id="cbox1" value="checkbox"/> 
+						</div>
+                	</div>
+                </div>
+
+            </div>
             <!--<input id="ex1" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="14"/> -->
         </div>
     </div>
@@ -79,9 +97,36 @@
             <div class="page-header">
                 <div id="map"></div>
             </div>
+            <div class="timespan-trend">
+            	<div id="timespan"></div>
+            </div>
         </div>
     </div>
 </div>
 
 <script src="basicmap.js"></script>
+<script>
+$(".select").change(function(e) {   
+	  if ( this.checked) 
+	  {	
+		  var id = $(e.target).parent().parent().find(".id")[0].value;
+		  console.log(id);
+		  $.ajax({
+		        url: "/select",
+		        method: 'GET',
+		        data: {"trend_chosen":id},
+		        //dataType: 'json',
+		        contentType: 'application/json',
+		        mimeType: 'application/json',
+		        success: function (response) {
+		            //Do stuff with the JSON data
+		            console.log("retrieved data");
+		            //var div = document.getElementById('timespan');
+		            //div.innerHTML = response;
+		            console.log(response);
+		            }
+    		});
+	  }
+});
+</script>
 </html>

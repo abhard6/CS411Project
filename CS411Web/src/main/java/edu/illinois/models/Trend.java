@@ -10,6 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
@@ -17,6 +18,8 @@ public class Trend {
     private String value;
 
     private Timestamp createdAt;
+    
+    private Timestamp trendingTill;	
 
     public String getValue() {
         return value;
@@ -26,6 +29,10 @@ public class Trend {
         this.value = value;
     }
     
+    public Timestamp getEndTimestamp() {
+    	return trendingTill;
+    }
+    
     public Timestamp getTimestamp() {
     	return createdAt;
     }
@@ -33,6 +40,10 @@ public class Trend {
     public Trend(String value) {
         this.value = value;
         this.createdAt = new Timestamp(System.currentTimeMillis());
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(createdAt);
+        cal.add(Calendar.DAY_OF_WEEK, 1);
+        trendingTill = new Timestamp(cal.getTime().getTime());
     }
 
     public Trend() {}

@@ -40,6 +40,7 @@ public abstract class BasicDao<T> {
 
         return results;
     }
+    
 
     public void deleteById(long val) {
         mySql.executeUpdate("DELETE FROM " + tableName + " WHERE id=" + val);
