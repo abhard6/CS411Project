@@ -83,3 +83,9 @@ body {
     border-right:0;
   }
 }
+
+    body, html { margin:0; padding:0; height:100%;}
+    #map { height:500px; }
+    .leaflet-container {
+    background: rgba(0,0,0,.8) !important;
+    }
