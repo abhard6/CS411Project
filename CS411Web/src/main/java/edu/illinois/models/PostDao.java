@@ -5,6 +5,7 @@ package edu.illinois.models;
  */
 import javax.transaction.Transactional;
 
+import edu.illinois.WordmapQuery;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -45,6 +46,32 @@ public class PostDao extends BasicDao<Post>{
                 "INNER JOIN " +
                 "(SELECT post_id FROM trended_post WHERE trend_id=\"" + trend_id +"\") as t " +
                 "ON t.post_id=" + tableName + ".id");
+
+        return fromResultSet(r);
+    }
+
+    public List<Post> findMatchingWordmapQuery(WordmapQuery query) {
+        String sql = "select * from trended_post" +
+                " inner join " +
+                "(select * from Post where " +
+                "latitude>" + query.latitudeBottom + " and " +
+                "latitude<" + query.latitudeTop + " and " +
+                "longitude<" + query.longitudeLeft + " and " +
+                "longitude<" + query.longitudeRight + ") as p " +
+                "on trended_post.post_id=p.id " +
+                "where ";
+
+        for (int i = 0; i < query.trends.size(); i++) {
+            sql += "trended_post.trend_id=\""+query.trends.get(i) + "\"";
+
+            if (i == query.trends.size()-1) {
+                sql += ";";
+            } else {
+                sql += " AND ";
+            }
+        }
+
+        ResultSet r = mySql.executeQuery(sql);
 
         return fromResultSet(r);
     }

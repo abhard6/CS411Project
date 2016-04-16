@@ -2,6 +2,10 @@ body {
   padding-top: 50px;
   overflow: hidden;
 }
+
+#generate-wordmap {
+  margin-top: 7px;
+}
 #wrapper {
   min-height: 100%;
   height: 100%;

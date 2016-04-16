@@ -112,13 +112,6 @@ public class RefinePost {
 				continue; //redundant with length check
 			}
 
-			//Remove the hash from hashtags
-			//TODO: we DEFINITELY want to keep hashtags semantically separate from words!!! TODO TODO TODO
-			if(tokenWithPunctuation.charAt(0) == '#') {
-				//System.out.println("Found a hashtag, keepin the word");
-				token = token.subSequence(1, token.length()).toString(); //Now it's subejct to below checks
-			}   			
-
 			//Remove links
 			//TODO: Maybe we want to look at links!			
 			if(token.length() >= 4 && (token.substring(0, 3).equals("www") || token.substring(0, 4).equals("http"))) {
