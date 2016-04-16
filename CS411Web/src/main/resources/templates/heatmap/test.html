@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>D3 CSV</title>
+</head>
+<body>
+
+<!-- <script src="d3.v3.js"></script>
+<script src="cloudlayout.js"></script> -->
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="d3.layout.cloud.js"></script>
+
+<script type="text/javascript">
+
+var fill = d3.scale.category20();
+
+var cityData = [], 
+    width = 500, 
+    height = 500;
+
+// d3.csv("us-cities.csv", function(data) {
+//     // build the list of city names
+//     data.forEach( function (d) {
+//         cityData.push(d.place);
+//     });
+    cityData[0] = "aaaaa";
+    cityData[1] = "bbbb";
+    cityData[2] = "cccc";
+    cityData[3] = "aaaaa";
+    cityData[4] = "aaaaa";
+    cityData[5] = "aaaaa";
+
+    d3.layout.cloud().size([800, 800])
+        .words(cityData.map(function(d) {
+            return {text: d, size: 10 + Math.random() * 90};
+        }))
+        .rotate(function() { return ~~(Math.random() * 2) * 90; })
+        .font("Impact")
+        .fontSize(function(d) { return d.size; })
+        .on("end", draw)
+        .start();
+//});
+
+function draw(words) {
+d3.select("body").append("svg")
+    .attr("width", 800)
+    .attr("height", 800)
+    .append("g")
+    .attr("transform", "translate(150,150)")
+    .selectAll("text")
+    .data(words)
+    .enter().append("text")
+    .style("font-size", function(d) { return d.size + "px"; })
+    .style("font-family", "Impact")
+    .style("fill", function(d, i) { return fill(i); })
+    .attr("text-anchor", "middle")
+    .attr("transform", function(d) {
+        return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+    })
+    .text(function(d) { return d.text; });
+}           
+</script>
+</body>
+</html>
