@@ -1,4 +1,86 @@
+ var fill = d3.scale.category20();
+
+function draw(words) {
+  d3.select("#wordmap").append("svg")
+    .attr("width", 500)
+    .attr("height", 500)
+    .append("g")
+    .attr("transform", "translate(150,150)")
+    .selectAll("text")
+    .data(words)
+    .enter().append("text")
+    .style("font-size", function(d) { return d.size + "px"; })
+    .style("font-family", "Impact")
+    .style("fill", function(d, i) { return fill(i); })
+    .attr("text-anchor", "middle")
+    .attr("transform", function(d) {
+      return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+    })
+    .text(function(d) { return d.text; });
+}
+
+
+function drawUpdate(words){
+    var total = 0;
+  $.each(words, function(index, entry) {
+    total+=entry['size'];
+   });
+
+   var avg = total/(words.length);
+
+  //delete svg
+  d3.selectAll('svg > g > *').remove();
+  d3.layout.cloud().size([500, 500])
+    .words(words)
+    .padding(12)
+    .rotate(function() { return ~~(Math.random() * 2) * 90; })
+    .font("Impact")
+    .fontSize(function(d) { return d.size; })
+    .start();
+
+  d3.select("svg")
+    .selectAll("g")
+    .attr("transform", "translate(150,150)")
+    .selectAll("text")
+    .data(words).enter().append("text")
+    .style("font-size", function(d) { return 12 * Math.round(d.size/avg) + "px"; }) // scaled around 12px
+    .style("font-family", "Impact")
+    .style("fill", function(d, i) { return fill(i); })
+    .attr("transform", function(d) {
+      return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+    })
+    .text(function(d) { return d.text; });
+}
+
+function showWordmapTab() {
+    // show the wordmap tab
+    $("#wordmap-tab").removeClass("hidden");
+    $(".nav-tabs li").removeClass("active");
+    $("#wordmap-tab").addClass("active");
+    $("#main").addClass("hidden");
+    $("#wordmap").removeClass("hidden");
+}
+
+function showMapTab() {
+    // show the map tab
+    $(".nav-tabs li").removeClass("active");
+    $("#main-tab").addClass("active");
+    $("#main").removeClass("hidden");
+    $("#wordmap").addClass("hidden");
+}
+
+$("#wordmap-tab").click(function(e) {
+    showWordmapTab();
+});
+
+$("#main-tab").click(function(e) {
+    showMapTab();
+});
+
 $("#generate-wordmap").click(function(e) {
+
+  bounds = map.getBounds();
+
   $.ajax({
     type: "POST",
     url: "/generate-wordmap",
@@ -8,18 +90,46 @@ $("#generate-wordmap").click(function(e) {
     },
     dataType: 'json',
     data: JSON.stringify({
-      "latitudeTop": 45.0,
-      "latitudeBottom": 35.0,
-      "longitudeLeft": 110.0,
-      "longitudeRight": 80.0,
+      "latitudeTop": bounds.getNorth(),
+      "latitudeBottom": bounds.getSouth(),
+      "longitudeLeft": bounds.getWest(),
+      "longitudeRight": bounds.getEast(),
       "trends": ["Raptors"]
     }),
     success: function(response) {
-      console.log(response);
+      d3.layout.cloud().size([500, 500])
+        .words(response)
+        .rotate(function() { return ~~(Math.random() * 2) * 90; })
+        .font("Impact")
+        .fontSize(function(d) { return d.size; })
+        .on("end", drawUpdate)
+        .start();
+
+        showWordmapTab();
     }
   });
 });
 
+$(".select").change(function(e) {
+	  if ( this.checked)
+	  {
+		  var id = $(e.target).parent().parent().find(".id")[0].value;
+		  console.log(id);
+		  $.ajax({
+		        url: "/select",
+		        method: 'GET',
+		        data: {"trend_chosen":id},
+		        //dataType: 'json',
+		        contentType: 'application/json',
+		        mimeType: 'application/json',
+		        success: function (response) {
+		            console.log(response);
+		                        heatmapLayer.setData({max: 4,
+                                data: response});
+		            }
+    		});
+	  }
+});
 
 window.onload = function() {
   var baseLayer = L.tileLayer(
@@ -29,16 +139,14 @@ window.onload = function() {
     }
   );
 
-    var objs = [];
-      var newData = {
-        max: 8,
-        data: [{lat: 41.87, lng:87.62, count: 3}]
-      };
+  var objs = [];
 
   var cfg = {
     // radius should be small ONLY if scaleRadius is true (or small radius is intended)
-    "radius": 2,
-    "maxOpacity": .8,
+    "radius": .5,
+    "scaleRadius": true,
+    "minOpacity": .3,
+    "maxOpacity": .6,
     // scales the radius based on map zoom
     "scaleRadius": true,
     // if set to false the heatmap uses the global maximum for colorization
@@ -46,33 +154,28 @@ window.onload = function() {
     //   (there will always be a red spot with useLocalExtremas true)
     "useLocalExtrema": true,
     // which field name in your data represents the latitude - default "lat"
-    latField: 'lat',
+    latField: 'latitude',
     // which field name in your data represents the longitude - default "lng"
-    lngField: 'lng',
+    lngField: 'longitude',
     // which field name in your data represents the data value - default "value"
-    valueField: 'count'
+    valueField: 'sentiment',
+
+    gradient: {
+      // enter n keys between 0 and 1 here
+      // for gradient color customization
+      '0': 'blue',
+      '1': 'red'
+    }
   };
 
 
-  var heatmapLayer = new HeatmapOverlay(cfg);
+  heatmapLayer = new HeatmapOverlay(cfg);
 
-  var map = new L.Map('map', {
+  map = new L.Map('map', {
     center: new L.LatLng(25.6586, -80.3568),
     zoom: 4,
     layers: [baseLayer, heatmapLayer]
   });
 
-  heatmapLayer.setData(newData);
-  layer = heatmapLayer; // Make available on the window.
-
-  // TODO: Yinrui, map is not really working.
-  $("#search").click(function(e) {
-      // TODO: Put actual results of search query as data
-      var testData = {
-        max: 8,
-        data: [{lat: 41.87, lng:-87.62, count: -3}]
-      };
-      
-      layer.setData(testData);
-  });
+  draw([]);
 };

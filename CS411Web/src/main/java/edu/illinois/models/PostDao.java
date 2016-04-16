@@ -50,13 +50,34 @@ public class PostDao extends BasicDao<Post>{
         return fromResultSet(r);
     }
 
+    public List<Post> findByTrends(List<String> trend_ids) {
+        String sql = "SELECT * FROM " + tableName + " " +
+                "INNER JOIN " +
+                "(SELECT post_id FROM trended_post WHERE ";
+
+
+        for (int i = 0; i < trend_ids.size(); i++) {
+            sql += "trend_id=\"" + trend_ids.get(i) + "\"";
+
+            if (i == trend_ids.size()-1) {
+                sql += ") as t ";
+            } else {
+                sql += " AND ";
+            }
+        }
+        sql += "ON t.post_id=" + tableName + ".id";
+        ResultSet r = mySql.executeQuery(sql);
+
+        return fromResultSet(r);
+    }
+
     public List<Post> findMatchingWordmapQuery(WordmapQuery query) {
         String sql = "select * from trended_post" +
                 " inner join " +
                 "(select * from Post where " +
                 "latitude>" + query.latitudeBottom + " and " +
                 "latitude<" + query.latitudeTop + " and " +
-                "longitude<" + query.longitudeLeft + " and " +
+                "longitude>" + query.longitudeLeft + " and " +
                 "longitude<" + query.longitudeRight + ") as p " +
                 "on trended_post.post_id=p.id " +
                 "where ";

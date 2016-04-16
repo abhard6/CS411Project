@@ -100,7 +100,7 @@ public class TrendDao extends BasicDao<Trend>{
     
     protected MapDetail singleResultMap(ResultSet r) {
         try {
-            int value = r.getInt(1);
+            long value = r.getLong(1);
             float lat = r.getFloat(2);
             float lon = r.getFloat(3);
             int sentiment = r.getInt(4);

@@ -27,6 +27,10 @@
 <script src="/heatmap.min.js"></script>
 <script src="/leaflet-heatmap.js"></script>
 
+<!--Stuff for wordmap-->
+<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="d3.layout.cloud.js"></script>
+
 <div id="header" class="navbar navbar-default navbar-fixed-top">
     <div class="navbar-header">
         <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target=".navbar-collapse">
@@ -58,17 +62,14 @@
                     <i style="color:red" class="pull-right glyphicon glyphicon-heart-empty"></i>
                 </h4>
             </div>
-            <h5 class="list-group-item">Trending:
-                <span class="label label-default">Inactive</span>
-                <span class="label label-success">Active</span>
-            </h5>
-            <h5 class="list-group-item"><button class="btn btn-sm pull-right" id="search">Search</button>
-            </h5>
+
             <div id="trends">
 	            <h5 class="list-group-item">Trending:
 	                <span class="label label-default">Inactive</span>
 	                <span class="label label-success">Active</span>
 	            </h5>
+                <h5 class="list-group-item"><button class="btn btn-sm pull-right" id="search">Search</button>
+                </h5>
     	        <h5 class="list-group-item">Choose a trend:
         	    </h5>
         	    <div id="trendslist"> Displaying trends here: 
@@ -89,8 +90,8 @@
     </div>
     <div id="main-wrapper" class="col-md-9 pull-right">
         <ul class="nav nav-tabs">
-            <li role="presentation" class="active"><a href="#">Sentiment Map</a></li>
-            <li role="presentation" class="hidden"><a href="#">Word Map</a></li>
+            <li id="main-tab" role="presentation" class="active"><a href="#">Sentiment Map</a></li>
+            <li id="wordmap-tab" role="presentation" class="hidden"><a href="#">Word Map</a></li>
             <button id="generate-wordmap" class="pull-right btn btn-sm">Generate Wordmap</button>
         </ul>
         <div id="main">
@@ -101,32 +102,12 @@
             	<div id="timespan"></div>
             </div>
         </div>
+        <div id="wordmap" class="hidden">
+
+        </div>
     </div>
 </div>
 
 <script src="basicmap.js"></script>
-<script>
-$(".select").change(function(e) {   
-	  if ( this.checked) 
-	  {	
-		  var id = $(e.target).parent().parent().find(".id")[0].value;
-		  console.log(id);
-		  $.ajax({
-		        url: "/select",
-		        method: 'GET',
-		        data: {"trend_chosen":id},
-		        //dataType: 'json',
-		        contentType: 'application/json',
-		        mimeType: 'application/json',
-		        success: function (response) {
-		            //Do stuff with the JSON data
-		            console.log("retrieved data");
-		            //var div = document.getElementById('timespan');
-		            //div.innerHTML = response;
-		            console.log(response);
-		            }
-    		});
-	  }
-});
-</script>
+
 </html>

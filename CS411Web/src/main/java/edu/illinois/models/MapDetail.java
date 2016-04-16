@@ -9,53 +9,53 @@ package edu.illinois.models;
 
 public class MapDetail {
 	
-	public int _id;
-	public float _latitude;
-	public float _longitude;
-	public int _sentiment;
+	public long id;
+	public float latitude;
+	public float longitude;
+	public int sentiment;
 	
 	public MapDetail() {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public MapDetail(int id, float lat, float lon, int sentiment)
+	public MapDetail(long id, float lat, float lon, int sentiment)
 	{
-		_id = id;
-		_latitude = lat;
-		_longitude = lon;
-		_sentiment = sentiment;
+		this.id = id;
+		latitude = lat;
+		longitude = lon;
+		this.sentiment = sentiment;
 	}
 
-	public int get_id() {
-		return _id;
+	public long getId() {
+		return id;
 	}
 
-	public void set_id(int _id) {
-		this._id = _id;
+	public void setId(int id) {
+		this.id = id;
 	}
 
-	public float get_latitude() {
-		return _latitude;
+	public float getLatitude() {
+		return latitude;
 	}
 
-	public void set_latitude(float _latitude) {
-		this._latitude = _latitude;
+	public void setLatitude(float latitude) {
+		this.latitude = latitude;
 	}
 
-	public float get_longitude() {
-		return _longitude;
+	public float getLongitude() {
+		return longitude;
 	}
 
-	public void set_longitude(float _longitude) {
-		this._longitude = _longitude;
+	public void setLongitude(float longitude) {
+		this.longitude = longitude;
 	}
 
-	public int get_sentiment() {
-		return _sentiment;
+	public int getSentiment() {
+		return sentiment;
 	}
 
-	public void set_sentiment(int _sentiment) {
-		this._sentiment = _sentiment;
+	public void setSentiment(int sentiment) {
+		this.sentiment = sentiment;
 	}
 	
 

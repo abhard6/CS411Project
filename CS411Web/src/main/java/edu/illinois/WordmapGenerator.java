@@ -14,18 +14,19 @@ import java.util.PriorityQueue;
  * Creates a list of WordFreqs for a given WordmapQuery
  */
 public class WordmapGenerator {
-    public Hashtable<String, Integer> getResult() {
+    public List<WordFreqEntry> getResult() {
         return result;
     }
 
-    private Hashtable<String, Integer> result;
+    private List<WordFreqEntry> result;
 
     public WordmapGenerator(WordmapQuery query, PostDao postDao) {
         this.result = getWordCounts(postDao.findMatchingWordmapQuery(query));
     }
 
-    private Hashtable<String, Integer> getWordCounts(List<Post> posts) {
+    private List<WordFreqEntry> getWordCounts(List<Post> posts) {
         Hashtable<String, Integer> wordFreqHash = new Hashtable<String, Integer>();
+        List<WordFreqEntry> ret = new ArrayList<WordFreqEntry>();
 
         // Extract word by word from all posts
         for (Post p : posts) {
@@ -40,6 +41,11 @@ public class WordmapGenerator {
             }
         }
 
-        return wordFreqHash;
+        // Put these in the form of wordfreq entries
+        for (String word : wordFreqHash.keySet()) {
+            ret.add(new WordFreqEntry(word, wordFreqHash.get(word)));
+        }
+
+        return ret;
     }
 }
