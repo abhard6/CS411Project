@@ -30,11 +30,10 @@ window.onload = function() {
   );
 
     var objs = [];
-    var newData = {
-      max: 8,
-      data: {"p1":{"lat": 24.6408, "lng":46.7728, "count": 3},
-             "p2": {"lat": 50.75, "lng":-1.55, "count": 3}}
-    };
+      var newData = {
+        max: 8,
+        data: [{lat: 41.87, lng:87.62, count: 3}]
+      };
 
   var cfg = {
     // radius should be small ONLY if scaleRadius is true (or small radius is intended)
@@ -66,11 +65,13 @@ window.onload = function() {
   heatmapLayer.setData(newData);
   layer = heatmapLayer; // Make available on the window.
 
-  // TODO: Yinrui, map is not really working. 
+  // TODO: Yinrui, map is not really working.
   $("#search").click(function(e) {
       // TODO: Put actual results of search query as data
-      data = {"p1":{"lat": 24.6408, "lng":46.7728, "count": 3},
-                          "p2": {"lat": 50.75, "lng":-1.55, "count": 3}};
-      layer.setData(data);
+      var testData = {
+        max: 8,
+        data: [{lat: 41.87, lng:-87.62, count: 3}]
+      };
+      layer.setData(testData);
   });
 };

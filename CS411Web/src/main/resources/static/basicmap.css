@@ -84,8 +84,12 @@ body {
   }
 }
 
+#main .page-header {
+  height: 500px;
+}
+
     body, html { margin:0; padding:0; height:100%;}
-    #map { height:500px; }
+    #map { height:100%; }
     .leaflet-container {
     background: rgba(0,0,0,.8) !important;
     }

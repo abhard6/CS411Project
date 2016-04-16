@@ -27,30 +27,6 @@
         <script type="text/javascript" src="/plugins/jquery.js"></script>
         <script>
           //$("button").click(function(){
-          var objs = [];
-          //objs.push({lat: 24.6408, lng:46.7728, count: 3});
-          console.log("load json start")
-          $.getJSON("/data/tweeter.json",function(obj){
-              $.each(obj, function(key,val){
-                  //objs.push({lat: 24.6408, lng:46.7728, count: 3});
-                  console.log(key)
-                  console.log(val)
-                  objs.push({
-                      lat: val.lat,
-                      lng: val.lng,
-                      count: val.count
-                  });
-              });
-
-              console.log("load json end")
-              var newData = {
-                max: 8,
-                data: objs
-              };
-              layer.setData(newData);
-              console.log("heat map data set in the json callback")
-          });
-          
 
           window.onload = function() {
             var baseLayer = L.tileLayer(
@@ -61,18 +37,18 @@
             );
 
             var testData = {
-              max: 8,
-              data: objs//[{lat: 24.6408, lng:46.7728, count: 3},{lat: 50.75, lng:-1.55, count: 3}],{lat: 52.6333, lng:1.75, count: 2},{lat: 48.15, lng:9.4667, count: 2},{lat: 52.35, lng:4.9167, count: 1},{lat: 60.8, lng:11.1, count: 1},{lat: 43.561, lng:-116.214, count: 1}]
-            };
-            
+        max: 8,
+        data: [{lat: 41.87, lng:-87.62, count: 3}]
+      };
+
             var cfg = {
               // radius should be small ONLY if scaleRadius is true (or small radius is intended)
               "radius": 2,
-              "maxOpacity": .8, 
+              "maxOpacity": .8,
               // scales the radius based on map zoom
-              "scaleRadius": true, 
+              "scaleRadius": true,
               // if set to false the heatmap uses the global maximum for colorization
-              // if activated: uses the data maximum within the current map boundaries 
+              // if activated: uses the data maximum within the current map boundaries
               //   (there will always be a red spot with useLocalExtremas true)
               "useLocalExtrema": true,
               // which field name in your data represents the latitude - default "lat"
