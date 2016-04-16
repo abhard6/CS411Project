@@ -24,7 +24,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import edu.illinois.models.TrendDao;
->>>>>>> Stashed changes
 
 /**
  * Created by nprince on 4/3/16.
@@ -36,6 +35,7 @@ public class MainController {
     @Autowired
     private PostDao postDao;
 
+    @Autowired
     private TrendDao _trendDao;
 		
     @RequestMapping("/")

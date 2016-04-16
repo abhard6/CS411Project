@@ -70,8 +70,9 @@ window.onload = function() {
       // TODO: Put actual results of search query as data
       var testData = {
         max: 8,
-        data: [{lat: 41.87, lng:-87.62, count: 3}]
+        data: [{lat: 41.87, lng:-87.62, count: -3}]
       };
+      
       layer.setData(testData);
   });
 };
