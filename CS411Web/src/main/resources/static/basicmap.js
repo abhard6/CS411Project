@@ -145,7 +145,7 @@ window.onload = function() {
     // radius should be small ONLY if scaleRadius is true (or small radius is intended)
     "radius": .5,
     "scaleRadius": true,
-    "minOpacity": .3,
+    "minOpacity": .6,
     "maxOpacity": .6,
     // scales the radius based on map zoom
     "scaleRadius": true,
@@ -163,9 +163,11 @@ window.onload = function() {
     gradient: {
       // enter n keys between 0 and 1 here
       // for gradient color customization
-      '0': 'blue',
+      '0': 'green',
+      '0.5': 'blue',
       '1': 'red'
-    }
+    },
+    blur: 0
   };
 
 
