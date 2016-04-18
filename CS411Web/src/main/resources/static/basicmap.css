@@ -84,6 +84,11 @@ body {
   }
 }
 
+#dropdown {
+  margin-top: -10px;
+  margin-left: -15px;
+}
+
 #main .page-header {
   height: 500px;
 }

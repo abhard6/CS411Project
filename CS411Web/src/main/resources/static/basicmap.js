@@ -147,7 +147,7 @@ $("#generate-wordmap").click(function(e) {
       "latitudeBottom": bounds.getSouth(),
       "longitudeLeft": bounds.getWest(),
       "longitudeRight": bounds.getEast(),
-      "trends": ["Raptors"]
+      "trends": [$("#dropdown").val()]
     }),
     success: function(response) {
       d3.layout.cloud().size([500, 500])
@@ -158,7 +158,6 @@ $("#generate-wordmap").click(function(e) {
         .on("end", drawUpdate)
         .start();
 
-      debugger;
         showWordmapTab();
     }
   });
