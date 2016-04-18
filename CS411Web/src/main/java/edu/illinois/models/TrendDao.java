@@ -6,6 +6,9 @@ package edu.illinois.models;
 import javax.transaction.Transactional;
 import javax.xml.transform.Result;
 
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.DurationFieldType;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Component;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,9 +34,9 @@ public class TrendDao extends BasicDao<Trend>{
     protected Trend singleResult(ResultSet r) {
         try {
             String value = r.getString("value");
-            //Timestamp created = r.getTimestamp("created_at");
-            //Timestamp end = r.getTimestamp("trending_till");
-            return new Trend(value); // Update constructor
+            Timestamp created = r.getTimestamp("created_at");
+            Timestamp end = r.getTimestamp("trending_till");
+            return new Trend(value,created,end); // Update constructor
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -40,13 +44,13 @@ public class TrendDao extends BasicDao<Trend>{
         return null;
     }
 
-    public List<Trend> findAll()
+    public List<Trend> findAllTrends()
     {
-    	ResultSet r = mySql.executeQuery("SELECT value FROM TREND");
-    	return fromResultSet(r);
-    	
+    	System.out.println("Finding all trends");
+    	ResultSet r = mySql.executeQuery("SELECT * FROM TREND");
+        return fromResultSet(r);
     }
-    
+        
     public List<Trend> findByPost(long post_id) {
         ResultSet r = mySql.executeQuery("SELECT * FROM " + tableName + " " +
                 "INNER JOIN " +
@@ -63,8 +67,8 @@ public class TrendDao extends BasicDao<Trend>{
 
     public void insert(Trend t) {
         mySql.executeUpdate("INSERT INTO " + tableName +
-                "(value, created_at) " +
-                "VALUES(\"" + t.getValue() + "\",\"" + t.getTimestamp() + "\")");
+                "(value, created_at, trending_till) " +
+                "VALUES(\"" + t.getValue() + "\",\"" + t.getTimestamp() + "\",\"" + t.getEndTimestamp() + "\")" );
 
         // Save all post relations as well
         for (Post p : t.getPosts()) {
@@ -111,4 +115,33 @@ public class TrendDao extends BasicDao<Trend>{
 
         return null;
     }
+
+	public void updateEndTime(String name, Timestamp now) {
+        mySql.executeUpdate("UPDATE" + tableName +
+                "SET  trending_till = \"" + now + "\"" +
+                "WHERE value = \"" + name + "\")" );
+		
+	}
+
+	public List<DateTime> daySpanForTrend(String val) {
+		// TODO Auto-generated method stub
+		ResultSet r = mySql.executeQuery("SELECT * FROM " + tableName + " WHERE value=\"" + val + "\"");
+
+		List<Trend> result = fromResultSet(r);
+		if(result.size() > 0)
+		{
+			ArrayList<DateTime> dayspan = new ArrayList<DateTime>();
+
+			DateTime startDate = new DateTime(result.get(0).getTimestamp());
+			int days = Days.daysBetween(startDate, new DateTime(result.get(0).getEndTimestamp())).getDays();
+			for (int i=0; i < days; i++) {
+				DateTime d = startDate.withFieldAdded(DurationFieldType.days(), i);
+				dayspan.add(d);
+				System.out.println("added day" + d);
+			}
+			return dayspan;
+		}
+
+		return null;
+	}
 } // class TrendDao

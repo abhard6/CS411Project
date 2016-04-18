@@ -1,5 +1,9 @@
 package edu.illinois.models;
 
+import java.util.List;
+
+import org.joda.time.DateTime;
+
 /**
  * Created by banumuthukumar on 4/2/16.
  * This class is used for a map detail object which is the components obtained

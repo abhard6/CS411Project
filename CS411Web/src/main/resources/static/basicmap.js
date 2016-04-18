@@ -19,6 +19,47 @@ function draw(words) {
     .text(function(d) { return d.text; });
 }
 
+$("#dropdown-timespan").on('change',function(){
+    var id=$(this).val();
+    console.log(id);
+});
+
+
+$("#dropdown").on('change',function(){
+    var id=$(this).val();
+
+    $.ajax({
+        url: "/timespan",
+        method: 'GET',
+        data: {"trend_chosen":id},
+        //dataType: 'json',
+        contentType: 'application/json',
+        mimeType: 'application/json',
+        success: function (response) {
+            console.log(response);
+            document.getElementById("timespan").innerHTML = response;
+                      
+            }
+	});
+
+    
+    //id="Amara";
+	  $.ajax({
+	        url: "/select",
+	        method: 'GET',
+	        data: {"trend_chosen":id},
+	        //dataType: 'json',
+	        contentType: 'application/json',
+	        mimeType: 'application/json',
+	        success: function (response) {
+	            console.log(response);
+	                        heatmapLayer.setData({max: 4,
+                            data: response});
+	            }
+		});
+
+  });
+
 
 function drawUpdate(words){
     var total = 0;
@@ -132,6 +173,8 @@ $(".select").change(function(e) {
 });
 
 window.onload = function() {
+	
+	
   var baseLayer = L.tileLayer(
     'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
       attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',

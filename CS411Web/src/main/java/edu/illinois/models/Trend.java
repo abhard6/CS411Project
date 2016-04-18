@@ -5,6 +5,11 @@ package edu.illinois.models;
  */
 
 import org.apache.tomcat.jni.Time;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.DurationFieldType;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -20,6 +25,8 @@ public class Trend {
     private Timestamp createdAt;
     
     private Timestamp trendingTill;	
+    
+    private List<DateTime> dayspan;
 
     public String getValue() {
         return value;
@@ -44,7 +51,15 @@ public class Trend {
         cal.setTime(createdAt);
         cal.add(Calendar.DAY_OF_WEEK, 1);
         trendingTill = new Timestamp(cal.getTime().getTime());
+        
+   	        
     }
+
+    public Trend(String value, Timestamp created_at, Timestamp trending_till) {
+        this.value = value;
+        this.createdAt = created_at;
+        this.trendingTill = trending_till;
+        }
 
     public Trend() {}
 
@@ -53,6 +68,7 @@ public class Trend {
      *    NOTE: This is pulled from the DB to save speed, as not every time we need a trend do we need all of its posts
      * @return
      */
+    @JsonIgnore
     public Collection<Post> getPosts() {
         PostDao dao = new PostDao();
 
