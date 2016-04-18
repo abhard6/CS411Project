@@ -79,10 +79,9 @@ public class TrendDao extends BasicDao<Trend>{
         }
     }
     
-    public List<MapDetail> wordListForTrend(String val)
-    {
+    public List<MapDetail> wordListForTrend(String val) {
     	ResultSet r = mySql.executeQuery("SELECT id, latitude, longitude, sentiment " +
-    						"FROM post JOIN trended_post ON Post.id = trended_post.post_id " +
+    						"FROM Post JOIN trended_post ON Post.id = trended_post.post_id " +
     						"WHERE trended_post.trend_id = \"" + val + "\";");
     	List<MapDetail> mapDetailResult = fromResultSetMap(r);
     	return mapDetailResult;
