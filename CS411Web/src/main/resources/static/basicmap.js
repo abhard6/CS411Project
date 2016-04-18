@@ -78,7 +78,6 @@ $("#main-tab").click(function(e) {
 });
 
 $("#generate-wordmap").click(function(e) {
-
   bounds = map.getBounds();
 
   $.ajax({
@@ -105,6 +104,7 @@ $("#generate-wordmap").click(function(e) {
         .on("end", drawUpdate)
         .start();
 
+      debugger;
         showWordmapTab();
     }
   });
