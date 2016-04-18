@@ -19,7 +19,7 @@ public class FacebookService {
 
 	    public FacebookService() {
 
-	        final String USER_TOKEN = "EAAOq6JcZCvUQBAEhkTJuLbjcgZB3PH0wwejgCCIBRRmBZC3Jia3IRLyGvZCoveUkw88eZClqUZAuDh2gTnD7S68QgCixUCQCRh8KMGQeXevZA9VcccjKZAAZBeWVzF01vI15XClrNkMElcpuRnPQRUZC5a0I6m4V5iM8kZD";
+	        final String USER_TOKEN = "EAACEdEose0cBAA7ttLm6WIu7VQDNxBZAs0cevw3aix9P06TNWmHBBZAGExRVQ2DGhUO1XeSrGe3ttAvRNej0C1LAFXPK4WZC5qOyvcWyWN1aKTNVoWmdx8EdkNRZC1ud76Oa7iSfH1ai91ZBJRwyKnhscF0tN3FCEg3UzwrDC0QZDZD";
 	        final String APP_ID = "1032340876803396"; 
 	        final String ACCESS_TOKEN = "1032340876803396|DYI4qx_9HzAdZHxvvTSVVzkzims";
 	        final String APP_SECRET = "86256309150d448a82abeead78cfc5f7";
