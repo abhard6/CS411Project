@@ -36,10 +36,21 @@ $("#dropdown").on('change',function(){
         contentType: 'application/json',
         mimeType: 'application/json',
         success: function (response) {
-            console.log(response);
-            document.getElementById("timespan").innerHTML = response;
-                      
-            }
+            var select = document.getElementById("timespan");
+            select.innerHTML = '';
+            var days = new Array();
+            for (var i=0; i<response.length; i++)
+            	{
+            		var r= response[i];
+            		var d = (new Date(r.year, r.monthOfYear, r.dayOfMonth, r.hourOfDay, r.minuteOfHour, 0, 0));
+                    days.push(d);
+            		var el = document.createElement("option");
+                    el.textContent = d;
+                    el.value = d;
+                    select.appendChild(el);
+	
+            	}
+        }
 	});
 
     
