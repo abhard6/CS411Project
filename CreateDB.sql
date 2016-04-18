@@ -19,8 +19,6 @@ PRIMARY KEY (`id`)
 CREATE TABLE `trended_post` (
 `post_id` bigint(20) NOT NULL,
 `trend_id` varchar(255) NOT NULL,
-KEY `FK_jqwi82fkhchbp32jgln1qq76m` (`trend_id`),
-KEY `FK_jk8e058l6d20lj54mosty0opw` (`post_id`),
-FOREIGN KEY (`post_id`) REFERENCES `post` (`id`),
+FOREIGN KEY (`post_id`) REFERENCES `post` (`id`), 
 FOREIGN KEY (`trend_id`) REFERENCES `trend` (`value`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
