@@ -2,6 +2,9 @@ package edu.illinois;
 
 import edu.illinois.models.Post;
 import edu.illinois.models.PostDao;
+import edu.illinois.models.Trend;
+
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
@@ -37,14 +40,35 @@ public class MainController {
 
     @Autowired
     private TrendDao _trendDao;
-		
+	
     @RequestMapping("/")
-    public String mainIndex(Model model) {    	
+    public String mainIndex(Model model) {
+    	
+    	System.out.println("returning main");
+    	model.addAttribute("alltrends", _trendDao.findAllTrends());
+    	model.addAttribute("timespan",new ArrayList<DateTime>());        
+    	return "basicmap";
+
+    }
+    
+    @RequestMapping("/loadtrends")
+    public String loadtrends() {    	
     
     	System.out.println("Displaying all trends");
-    	model.addAttribute("alltrends", _trendDao.findAll());
-    	//model.addAttribute("timespan", null);
-    	return "basicmap";
+    	/*ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+    	try {
+    		List<Trend> results = _trendDao.findAllTrends();
+    		System.out.println("got trends back");
+			String json = ow.writeValueAsString(results);
+			System.out.println("Printing all trends : " + json);
+			return json;
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	*/
+    	return null;
+    	
     }
 
     @RequestMapping("/generate-wordmap")
@@ -75,5 +99,22 @@ public class MainController {
         //Also make a new attribute for the posts
     }
     
-
+    @RequestMapping(value = "/timespan" , method = RequestMethod.GET)
+    public @ResponseBody
+    String timespan(@RequestParam("trend_chosen") String val) {
+    	System.out.println("here in timespan");
+    	System.out.println(val);
+    	//model.addAttribute("timespan",_trendDao.daySpanForTrend(val));
+    	ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+    	try {
+			String json = ow.writeValueAsString(_trendDao.daySpanForTrend(val));
+			System.out.println(json);
+			return json;
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	return null;
+    }
 }

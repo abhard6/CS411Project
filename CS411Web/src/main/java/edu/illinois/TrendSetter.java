@@ -2,6 +2,10 @@ package edu.illinois;
 
 import edu.illinois.models.PostDao;
 import edu.illinois.models.TrendDao;
+
+import java.sql.Timestamp;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import twitter4j.Trend;
 import twitter4j.TwitterException;
@@ -30,9 +34,23 @@ public class TrendSetter {
         for (Trend t : trendsArr) {
 
             // Only save new trends
-            if (_trendDao.findByValue(t.getName()).size() == 0) {
+        	List<edu.illinois.models.Trend> existingTrend = _trendDao.findByValue(t.getName());
+            if (existingTrend.size() == 0) {
                 edu.illinois.models.Trend myTrend = new edu.illinois.models.Trend(t.getName());
                 _trendDao.insert(myTrend);
+            }
+            else
+            {
+            	Timestamp end_at;
+				if(existingTrend.size() == 1)
+				{
+					end_at = existingTrend.get(0).getEndTimestamp();
+					if(end_at != null)
+					{	Timestamp now = new Timestamp(System.currentTimeMillis());
+						if(end_at.before(now))
+							_trendDao.updateEndTime(t.getName(), now);
+					}
+				}
             }
         }
     }
