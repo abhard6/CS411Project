@@ -99,7 +99,7 @@ public class PostDao extends BasicDao<Post>{
 
     public Post getLastPost() {
        return fromResultSet(
-               mySql.executeQuery("SELECT * FROM POST WHERE id=(SELECT MAX(id) FROM " + tableName + ")")
+               mySql.executeQuery("SELECT * FROM Post WHERE id=(SELECT MAX(id) FROM " + tableName + ")")
        ).get(0);
     }
 
