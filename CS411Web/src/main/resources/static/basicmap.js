@@ -36,7 +36,8 @@ $("#dropdown").on('change',function(){
         contentType: 'application/json',
         mimeType: 'application/json',
         success: function (response) {
-            var select = document.getElementById("timespan");
+            if(response)
+            {        	var select = document.getElementById("timespan");
             select.innerHTML = '';
             var days = new Array();
             for (var i=0; i<response.length; i++)
@@ -50,6 +51,7 @@ $("#dropdown").on('change',function(){
                     select.appendChild(el);
 	
             	}
+            }
         }
 	});
 

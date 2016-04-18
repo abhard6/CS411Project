@@ -77,9 +77,9 @@
         	    	<div class="col-xs-10">
         	    	<select id="dropdown" th:field="*{alltrends}" class="col-xs-10">
     				<option value="NONE">---- Select ----</option>
-    					<option th:each="trend : *{alltrends}"
-            					th:value="${trend.value}"
-            					th::text="${trend.value}">
+    					<option th:each="trend : ${alltrends}"
+            					th:value="${trend.getValue()}"
+            					th:text="${trend.getValue()}">
            				</option>
 					</select>
 					</div>
