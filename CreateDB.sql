@@ -1,6 +1,7 @@
 CREATE TABLE `Trend` (
 `value` varchar(255) NOT NULL,
 `created_at` datetime NOT NULL,
+`trending_till` datetime, 
 PRIMARY KEY (`value`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
