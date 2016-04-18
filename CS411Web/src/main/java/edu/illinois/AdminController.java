@@ -40,7 +40,7 @@ public class AdminController {
      */
     @RequestMapping("/admin")
     public String index(Model model) {
-        model.addAttribute("entries", _postDao.findAll());
+        model.addAttribute("entries", _postDao.findAllLimit(100));
         return "index";
     }
 
@@ -75,7 +75,7 @@ public class AdminController {
         p.setSentiment(Integer.parseInt(body.get("sentiment")));
         p.setSource(body.get("source"));
 
-        _postDao.insert(p);
+        _postDao.update(p);
 
         return true;
     }

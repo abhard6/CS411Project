@@ -55,4 +55,9 @@ public abstract class BasicDao<T> {
         ResultSet r = mySql.executeQuery("SELECT * FROM " + tableName);
         return fromResultSet(r);
     }
+
+    public List<T> findAllLimit(int limit) {
+        ResultSet r = mySql.executeQuery("SELECT * FROM " + tableName + " limit " + limit);
+        return fromResultSet(r);
+    }
 }
