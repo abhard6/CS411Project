@@ -44,10 +44,9 @@ public class TrendDao extends BasicDao<Trend>{
         return null;
     }
 
-    public List<Trend> findAllTrends()
-    {
+    public List<Trend> findAllTrends() {
     	System.out.println("Finding all trends");
-    	ResultSet r = mySql.executeQuery("SELECT * FROM TREND");
+    	ResultSet r = mySql.executeQuery("SELECT * FROM Trend");
         return fromResultSet(r);
     }
         
