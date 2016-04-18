@@ -129,6 +129,25 @@ public class PostDao extends BasicDao<Post>{
                     "(SELECT value FROM Trend WHERE value=\"" + t.getValue() + "\"))");
         }
     }
+
+    public void delete(Post p ) {
+        // Delete all associated trended
+        for (Trend t : p.getTrends()) {
+            mySql.executeUpdate("DELETE FROM trended_post WHERE trend_id=\"" + t.getValue() + "\" AND post_id=" + p.getId());
+        }
+
+        mySql.executeUpdate("DELETE FROM " + tableName + " WHERE id=" + p.getId());
+    }
+
+//    public void update(Post p) {
+//        // Delete all associated trended
+//        mySql.executeUpdate("UPDATE Post");
+//        for (Trend t : p.getTrends()) {
+//            mySql.executeUpdate("DELETE FROM Trend WHERE value"=t.getValue());
+//        }
+//
+//        mySql.executeUpdate("DELETE FROM " + tableName + " WHERE id=" + p.getId());
+//    }
 }
 
 //@Transactional

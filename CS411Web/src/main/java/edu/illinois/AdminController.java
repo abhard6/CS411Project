@@ -53,7 +53,7 @@ public class AdminController {
     public @ResponseBody
     boolean delete(@RequestBody Map<String,String> body) {
         long id = Long.parseLong(body.get("id"));
-        _postDao.deleteById(id);
+        _postDao.delete(_postDao.findById(id).get(0));
 
         return true;
     }

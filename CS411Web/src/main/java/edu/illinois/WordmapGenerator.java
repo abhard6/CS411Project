@@ -46,6 +46,18 @@ public class WordmapGenerator {
             ret.add(new WordFreqEntry(word, wordFreqHash.get(word)));
         }
 
+        // Only get the top 10
+        PriorityQueue<WordFreqEntry> pq = new PriorityQueue<WordFreqEntry>();
+        for (WordFreqEntry entry : ret) {
+            pq.add(entry);
+        }
+
+        // Now only give the top 50
+        ret.clear();
+        for (int i = 0; i < 50; i++) {
+            ret.add(pq.poll());
+        }
+
         return ret;
     }
 }
