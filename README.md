@@ -6,12 +6,14 @@ This project should be importeted as a maven project on whichever IDE you use.
      
 Instalation
 ----------
-(in the command line on your computer, if it's a mac or linux)
+(in the command line on your computer, if it's a mac or linux, from the main directory of this project)
 
     mysql -h localhost -u root -p
     CREATE USER 'socsenti_rift'@'localhost' IDENTIFIED BY 'cs411';
     CREATE DATABASE socsenti_rift;
     GRANT ALL PRIVILEGES ON socsenti_rift.* TO 'socsenti_rift'@'localhost';
+    connect socsenti_rift;
+    source CreateDB.sql;
 
 In your IDE, run DemoApplication.java. Or, in the command line run
 
