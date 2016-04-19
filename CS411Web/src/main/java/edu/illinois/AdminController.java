@@ -95,7 +95,7 @@ public class AdminController {
             tweetStream.start();
             facebookService = new FacebookService();
         	fbPostSearch = new FbPostSearch();
-        	//fbPostSearch.startFbSearch(_postDao, _trendDao, facebookService.getConf());
+        	fbPostSearch.startFbSearch(_postDao, _trendDao, facebookService.getConf());
 
         } catch (Exception e) {
             e.printStackTrace();
