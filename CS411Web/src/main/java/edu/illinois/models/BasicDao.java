@@ -34,9 +34,12 @@ public abstract class BasicDao<T> {
             while (r.next()) {
                 results.add(singleResult(r));
             }
+
+            r.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
 
         return results;
     }
