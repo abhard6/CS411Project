@@ -54,11 +54,17 @@ public class MainController {
     }
     
     @RequestMapping("/loadtrends")
-    public String loadtrends() {    	
+    @ResponseBody
+    public List<String> loadtrends() {    	
     
-    	System.out.println("Displaying all trends");
-    	return null;
+    	ArrayList<String> words = new ArrayList<String>();
+    	List<Trend> trends = _trendDao.findAll();
     	
+    	for (Trend t : trends) {
+    		words.add(t.getValue());
+    	}
+    	
+    	return words;
     }
 
     @RequestMapping("/generate-wordmap")

@@ -65,7 +65,7 @@ public class FbPostSearch {
 		facebook = new FacebookFactory(conf).getInstance();
 
 		// Need to update!! 
-		String ats = "EAACEdEose0cBABASsEp0cHWeo7EWNRhEZBhSETu0SD8sg4R3verwIjWCaQtdG2bTZAZA9laluxgYZBW7xQkP9YZAe9wbUn7VF2frJO0cAiZBX6AeKkcnZC6m9iaiF81HZCW6ZAXzGJdsDKOMzZCxxX9k1RhCvS7KNz381XR8OwStS3jgZDZD";
+		String ats = "EAACEdEose0cBACuWNEA5CDRYwJiqB2LAYzezqPVKjX0DxB6pxjzZBmbJGufj2fXf6kIJir8S81oVb3HQdGyqyiMtl4gaocVu1ZAR1UGQxbhlORBzwyajbHyYWrYg48qAPufHno4rAoTGkXC8DKQVG2BihY3RffS3b1RBQqowZDZD";
 
 		String APP_ID = "968228206588362"; 
 		String APP_SECRET = "c46ea5ba358b2f7374b0302b060e4797";
@@ -75,14 +75,8 @@ public class FbPostSearch {
 		AccessToken at = new AccessToken(ats);
 		//AccessToken at = facebook.getOAuthAccessToken();	
 		// Set access token.
-		try {
-			AccessToken atNew = facebook.extendTokenExpiration(ats);
-			facebook.setOAuthAccessToken(atNew);
+		facebook.setOAuthAccessToken(at);
 
-		} catch (FacebookException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 		
 		//For every trend, search Facebook
 		for (Trend trend : trends) {
@@ -160,7 +154,7 @@ public class FbPostSearch {
 								int sentimentscore = refinePost.findSentiment(withoutPunctuation);
 
 								Post p = new Post(timestamp, withoutPunctuation, sentimentscore, (float) latitude, (float) longitude, "facebook", postTrends);
-								//_postDao.save(p);
+								_postDao.insert(p);
 								System.out.println(post.getId() + post.getMessage() + post.getPlace() + post.getMessage());
 								System.out.println("Created a post!!!");
 							}
