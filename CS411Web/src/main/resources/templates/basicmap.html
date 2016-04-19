@@ -68,7 +68,7 @@
         	    </h5>
         	    <div id="trendslist" class="list-group-item">
         	    	<div class="col-xs-10">
-        	    	<select id="dropdown" th:field="*{alltrends}" class="col-xs-10">
+        	    	<select id="dropdown" th:field="*{alltrends}" class="col-xs-10" >
     				<option value="NONE">---- Select ----</option>
     					<option th:each="trend : ${alltrends}"
             					th:value="${trend.getValue()}"

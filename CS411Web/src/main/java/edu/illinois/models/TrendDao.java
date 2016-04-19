@@ -129,7 +129,7 @@ public class TrendDao extends BasicDao<Trend>{
 		if(result.size() > 0)
 		{
 			ArrayList<DateTime> dayspan = new ArrayList<DateTime>();
-
+			System.out.println(result.get(0).getTimestamp());
 			DateTime startDate = new DateTime(result.get(0).getTimestamp());
 			int days = Days.daysBetween(startDate, new DateTime(result.get(0).getEndTimestamp())).getDays();
 			for (int i=0; i < days; i++) {
@@ -141,5 +141,18 @@ public class TrendDao extends BasicDao<Trend>{
 		}
 
 		return null;
+	}
+
+	public List<MapDetail> wordListForTrendWithinDate(DateTime dt, String trend) {
+		// TODO Auto-generated method stub
+		Timestamp ts = new Timestamp(dt.getMillis());
+		System.out.println(ts);
+		ResultSet r = mySql.executeQuery("SELECT id, latitude, longitude, sentiment " +
+				"FROM Post JOIN trended_post ON Post.id = trended_post.post_id " +
+				"WHERE trended_post.trend_id = \"" + trend + "\"" +
+				"AND post.timestamp > \"" + ts + "\"" +
+				"AND post.timestamp <= \"" + ts + "\";");
+		List<MapDetail> mapDetailResult = fromResultSetMap(r);
+		return mapDetailResult;
 	}
 } // class TrendDao

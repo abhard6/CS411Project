@@ -5,6 +5,8 @@ import edu.illinois.models.PostDao;
 import edu.illinois.models.Trend;
 
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
@@ -55,18 +57,6 @@ public class MainController {
     public String loadtrends() {    	
     
     	System.out.println("Displaying all trends");
-    	/*ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-    	try {
-    		List<Trend> results = _trendDao.findAllTrends();
-    		System.out.println("got trends back");
-			String json = ow.writeValueAsString(results);
-			System.out.println("Printing all trends : " + json);
-			return json;
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	*/
     	return null;
     	
     }
@@ -117,4 +107,24 @@ public class MainController {
     	
     	return null;
     }
+    @RequestMapping(value = "/daychoose" , method = RequestMethod.GET)
+    public @ResponseBody
+    String daychoose(@RequestParam("day_chosen") String date, @RequestParam("trend") String trend ) {
+    	System.out.println("here in day chosen");
+    	System.out.println(date);
+    	DateTimeFormatter formatter = DateTimeFormat.forPattern("EEE MMM dd yyyy HH:mm:ss 'GMT'Z (z)");
+    	DateTime dt = formatter.withOffsetParsed().parseDateTime(date);
+    	System.out.println("After dateformet : " + dt);
+    	ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+    	try {
+			String json = ow.writeValueAsString(_trendDao.wordListForTrendWithinDate(dt,trend));
+			System.out.println(json);
+			return json;
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return null;
+    }
+
 }
