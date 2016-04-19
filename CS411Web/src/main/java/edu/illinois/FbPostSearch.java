@@ -65,7 +65,7 @@ public class FbPostSearch {
 		facebook = new FacebookFactory(conf).getInstance();
 
 		// Need to update!! 
-		String ats = "EAACEdEose0cBAF9VBXsacEmRPqEcyCuW94F1mIFQa6KsYKwkpFxZAJ3YMnkZCnqWAN8w8R2oeCMXBGj50W40flcOr6QhTLBc4HaZCPd0bjwApBulZCDRfYMAnfLcOoY6tkA3v2oxUbH8QNGpbQmjkXkAsoKc01cm9Sa5NuZBXTwZDZD";
+		String ats = "EAACEdEose0cBACuWNEA5CDRYwJiqB2LAYzezqPVKjX0DxB6pxjzZBmbJGufj2fXf6kIJir8S81oVb3HQdGyqyiMtl4gaocVu1ZAR1UGQxbhlORBzwyajbHyYWrYg48qAPufHno4rAoTGkXC8DKQVG2BihY3RffS3b1RBQqowZDZD";
 
 		String APP_ID = "968228206588362"; 
 		String APP_SECRET = "c46ea5ba358b2f7374b0302b060e4797";
@@ -154,7 +154,7 @@ public class FbPostSearch {
 								int sentimentscore = refinePost.findSentiment(withoutPunctuation);
 
 								Post p = new Post(timestamp, withoutPunctuation, sentimentscore, (float) latitude, (float) longitude, "facebook", postTrends);
-								//_postDao.save(p);
+								_postDao.insert(p);
 								System.out.println(post.getId() + post.getMessage() + post.getPlace() + post.getMessage());
 								System.out.println("Created a post!!!");
 							}
