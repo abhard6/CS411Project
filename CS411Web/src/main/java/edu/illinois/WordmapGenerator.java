@@ -54,7 +54,7 @@ public class WordmapGenerator {
 
         // Now only give the top 50
         ret.clear();
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 100; i++) {
             ret.add(pq.poll());
         }
 
