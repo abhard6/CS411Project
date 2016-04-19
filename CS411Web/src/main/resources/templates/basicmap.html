@@ -89,8 +89,12 @@
     </div>
     <div id="main-wrapper" class="col-md-9 pull-right">
         <ul class="nav nav-tabs">
-            <li id="main-tab" role="presentation" class="active"><a href="#">Sentiment Map</a></li>
+            <li id="main-tab" role="presentation" class="active">
+                <a href="#">Sentiment Map</a>
+                <p id="main-favorite" class="glyphicon glyphicon-heart-empty" style="margin-top: 0px;color:red;cursor:pointer;position: absolute;left: 86%;top: 35%;"></p>
+            </li>
             <li id="wordmap-tab" role="presentation" class="hidden"><a href="#">Word Map</a></li>
+            <p id="wordmap-favorite" class="hidden glyphicon glyphicon-heart-empty" style="margin-top: 0px;color:red;cursor:pointer;position: absolute;left: 86%;top: 35%;"></p>
             <button id="generate-wordmap" class="pull-right btn btn-sm">Generate Wordmap</button>
         </ul>
         <div id="main">
