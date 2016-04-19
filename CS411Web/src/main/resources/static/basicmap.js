@@ -24,6 +24,29 @@ $("#dropdown-timespan").on('change',function(){
     console.log(id);
 });
 
+$("#timespan").on('change',function(){
+    var id=$(this).val();
+    console.log("changed timespan");
+    $.ajax({
+        url: "/daychoose",
+        method: 'GET',
+        data: {"day_chosen":id,"trend":"Amara"},
+        //dataType: 'json',
+        contentType: 'application/json',
+        mimeType: 'application/json',
+        success: function (response) {
+            if(response)
+            {        	
+                console.log(response);
+                heatmapLayer.setData({max: 4,
+                data: response});
+
+            }
+        }
+	});
+});
+
+
 
 $("#dropdown").on('change',function(){
     var id=$(this).val();
@@ -36,22 +59,22 @@ $("#dropdown").on('change',function(){
         contentType: 'application/json',
         mimeType: 'application/json',
         success: function (response) {
-            if(response)
-            {        	var select = document.getElementById("timespan");
-            select.innerHTML = '';
-            var days = new Array();
-            for (var i=0; i<response.length; i++)
-            	{
-            		var r= response[i];
-            		var d = (new Date(r.year, r.monthOfYear, r.dayOfMonth, r.hourOfDay, r.minuteOfHour, 0, 0));
-                    days.push(d);
-            		var el = document.createElement("option");
-                    el.textContent = d;
-                    el.value = d;
-                    select.appendChild(el);
-	
-            	}
-            }
+        	if(response)
+        	{        	
+        		var select = document.getElementById("timespan");
+        		select.innerHTML = '';
+        		var days = new Array();
+        		for (var i=0; i<response.length; i++)
+        		{
+        			var r= response[i];
+        			var d = (new Date(r.year, r.monthOfYear, r.dayOfMonth, r.hourOfDay, r.minuteOfHour, 0, 0));
+        			days.push(d);
+        			var el = document.createElement("option");
+        			el.textContent = d;
+        			el.value = d;
+        			select.appendChild(el);
+        		}
+        	}
         }
 	});
 
