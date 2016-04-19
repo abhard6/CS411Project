@@ -150,8 +150,7 @@ public class TrendDao extends BasicDao<Trend>{
 		ResultSet r = mySql.executeQuery("SELECT id, latitude, longitude, sentiment " +
 				"FROM Post JOIN trended_post ON Post.id = trended_post.post_id " +
 				"WHERE trended_post.trend_id = \"" + trend + "\"" +
-				"AND post.timestamp > \"" + ts + "\"" +
-				"AND post.timestamp <= \"" + ts + "\";");
+				"AND post.timestamp < \"" + ts + "\";");
 		List<MapDetail> mapDetailResult = fromResultSetMap(r);
 		return mapDetailResult;
 	}
