@@ -65,7 +65,7 @@ public class FbPostSearch {
 		facebook = new FacebookFactory(conf).getInstance();
 
 		// Need to update!! 
-		String ats = "EAACEdEose0cBABASsEp0cHWeo7EWNRhEZBhSETu0SD8sg4R3verwIjWCaQtdG2bTZAZA9laluxgYZBW7xQkP9YZAe9wbUn7VF2frJO0cAiZBX6AeKkcnZC6m9iaiF81HZCW6ZAXzGJdsDKOMzZCxxX9k1RhCvS7KNz381XR8OwStS3jgZDZD";
+		String ats = "EAACEdEose0cBAF9VBXsacEmRPqEcyCuW94F1mIFQa6KsYKwkpFxZAJ3YMnkZCnqWAN8w8R2oeCMXBGj50W40flcOr6QhTLBc4HaZCPd0bjwApBulZCDRfYMAnfLcOoY6tkA3v2oxUbH8QNGpbQmjkXkAsoKc01cm9Sa5NuZBXTwZDZD";
 
 		String APP_ID = "968228206588362"; 
 		String APP_SECRET = "c46ea5ba358b2f7374b0302b060e4797";
@@ -75,14 +75,8 @@ public class FbPostSearch {
 		AccessToken at = new AccessToken(ats);
 		//AccessToken at = facebook.getOAuthAccessToken();	
 		// Set access token.
-		try {
-			AccessToken atNew = facebook.extendTokenExpiration(ats);
-			facebook.setOAuthAccessToken(atNew);
+		facebook.setOAuthAccessToken(at);
 
-		} catch (FacebookException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 		
 		//For every trend, search Facebook
 		for (Trend trend : trends) {
