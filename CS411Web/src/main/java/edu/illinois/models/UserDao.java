@@ -32,7 +32,7 @@ public class UserDao extends BasicDao<Login>{
 
 	public void insert(Registration greeting) {
 		Connection conn = mySql.connection;
-		String query = "INSERT INTO  users" + " (username,password) " +  " values (?, ?);";
+		String query = "INSERT INTO  Users" + " (username,password) " +  " values (?, ?);";
 
 		PreparedStatement preparedStmt;
 		try {
@@ -52,7 +52,7 @@ public class UserDao extends BasicDao<Login>{
 	
 	public boolean validateUser(Login loginObj) {
 		Connection conn = mySql.connection;
-		String query = "select 1 from users where username = ? and password = ?";
+		String query = "select 1 from Users where username = ? and password = ?";
 		
 		PreparedStatement preparedStmt;
 		ResultSet rs;
