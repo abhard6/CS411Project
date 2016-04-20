@@ -22,3 +22,8 @@ CREATE TABLE `trended_post` (
 FOREIGN KEY (`post_id`) REFERENCES `Post` (`id`), 
 FOREIGN KEY (`trend_id`) REFERENCES `Trend` (`value`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE users (
+username VARCHAR(45) NOT NULL,
+password VARCHAR(45) NOT NULL,
+id INT AUTO_INCREMENT PRIMARY KEY);
