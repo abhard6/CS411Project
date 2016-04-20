@@ -2,6 +2,9 @@ package edu.illinois;
 
 import javax.servlet.http.HttpSession;
 
+import edu.illinois.models.*;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -10,10 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import edu.illinois.models.Login;
-import edu.illinois.models.UserDao;
-
-
+import java.util.ArrayList;
 
 
 @Controller
@@ -21,6 +21,16 @@ import edu.illinois.models.UserDao;
 
 
 public class RegistrationController {
+	@Autowired
+	private PostDao postDao;
+
+	@Autowired
+	private TrendDao _trendDao;
+
+	@Autowired
+	private QueryDao queryDao;
+
+
 	  @RequestMapping(value="/registration", method=RequestMethod.GET)
 	    public String greetingForm(Model model) {
 	        model.addAttribute("registration", new Registration());
@@ -62,6 +72,9 @@ public class RegistrationController {
 	        boolean flag = userdao.validateUser(login);
 	        if(flag)
 	        {
+				model.addAttribute("alltrends", _trendDao.findAllTrends());
+				model.addAttribute("timespan",new ArrayList<DateTime>());
+				model.addAttribute("favorites", queryDao.findFavorites(login.getUserName()));
 	        	//login.setMessage("Welcome!! "+login.getUserName() );
 	        	//login.setValidUser(true);
 	        	return "basicmap";

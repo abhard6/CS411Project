@@ -11,7 +11,24 @@ import java.sql.SQLException;
 
 
 @Component("UserDao")
-public class UserDao extends BasicDao<Post>{
+public class UserDao extends BasicDao<Login>{
+
+	public void insertUserQuery(String username, Query t) {
+		mySql.executeUpdate("INSERT INTO user_query(username, query_id) VALUES(\"" + username + "\"," + t.id + ")");
+	}
+
+	public void removeUserQuery(String username, Query t) {
+		mySql.executeUpdate("DELETE FROM user_query WHERE username=\"" + username + "\" AND query_id=" + t.id + "");
+	}
+
+	public boolean foundUserQuery(String username, Query t) {
+		try {
+			return mySql.executeQuery("SELECT * FROM user_query WHERE username=\"" + username + "\" AND query_id=" + t.id).first();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
 	public void insert(Registration greeting) {
 		Connection conn = mySql.connection;
@@ -63,9 +80,14 @@ public class UserDao extends BasicDao<Post>{
 
 
 	@Override
-	Post singleResult(ResultSet r) {
-		// TODO Auto-generated method stub
-		return null;
+	Login singleResult(ResultSet r) {
+			try {
+				return new Login(r.getString("username"), r.getString("password"));
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+			return null;
 	}
 
 }

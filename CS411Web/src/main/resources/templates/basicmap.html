@@ -60,6 +60,10 @@
                 <h4 class="list-group-item"> Favorites
                     <i style="color:red" class="pull-right glyphicon glyphicon-heart"></i>
                 </h4>
+                <ul id="favorites-list">
+                    <li th:each="favorite : ${favorites}" ><a class="favorite" href="#" th:value='${favorite.jsonValue}' th:text="${favorite.displayValue}"></a></li>
+                </ul>
+
             </div>
 
             <div id="trends">

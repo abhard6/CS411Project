@@ -31,6 +31,17 @@ CREATE TABLE `Query` (
 `latitude_bottom` float,
 `longitude_left` float,
 `longitude_right` float,
-FOREIGN KEY (`trend`) REFERENCES `Trend` (`value`) ON DELETE CASCADE
+FOREIGN KEY (`trend`) REFERENCES `Trend` (`value`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
    
+CREATE TABLE Users (
+username VARCHAR(45) PRIMARY KEY,
+password VARCHAR(45) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE user_query (
+username VARCHAR(45) NOT NULL,
+query_id bigint(20),
+FOREIGN KEY (username) REFERENCES Users(username),
+FOREIGN KEY (query_id) REFERENCES Query(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

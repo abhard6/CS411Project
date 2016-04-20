@@ -1,8 +1,6 @@
 package edu.illinois;
 
-import edu.illinois.models.Post;
-import edu.illinois.models.PostDao;
-import edu.illinois.models.Trend;
+import edu.illinois.models.*;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -28,7 +26,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
-import edu.illinois.models.TrendDao;
+import javax.servlet.http.HttpSession;
 
 /**
  * Created by nprince on 4/3/16.
@@ -42,15 +40,22 @@ public class MainController {
 
     @Autowired
     private TrendDao _trendDao;
+
+	@Autowired
+	private QueryDao queryDao;
+
+	@Autowired
+	private UserDao userDao;
 	
     @RequestMapping("/")
-    public String mainIndex(Model model) {
-    	
-    	System.out.println("returning main");
-    	model.addAttribute("alltrends", _trendDao.findAllTrends());
-    	model.addAttribute("timespan",new ArrayList<DateTime>());        
-    	return "basicmap";
+    public String mainIndex(Model model, HttpSession session) {
+		String username = (String) session.getAttribute("login");
 
+		System.out.println("returning main");
+    	model.addAttribute("alltrends", _trendDao.findAllTrends());
+    	model.addAttribute("timespan",new ArrayList<DateTime>());
+		model.addAttribute("favorites", queryDao.findFavorites(username));
+    	return "basicmap";
     }
     
     @RequestMapping("/loadtrends")
@@ -94,6 +99,40 @@ public class MainController {
         //Return the timespan
         //Also make a new attribute for the posts
     }
+
+	@RequestMapping(value="/favorite")
+	@ResponseBody
+	public void favorite(@RequestBody Query query, HttpSession session, Model model) {
+		String username = (String) session.getAttribute("login");
+
+		List<Query> found = queryDao.findByAll(query);
+		if (found.size() == 0) {
+			queryDao.insert(query);
+			found = queryDao.findByAll(query);
+		}
+
+		if (userDao.foundUserQuery(username, found.get(0))) {
+			return; // do nothing
+		}
+		userDao.insertUserQuery(username, found.get(0));
+
+		model.addAttribute("favorites", queryDao.findFavorites(username));
+	}
+
+	@RequestMapping(value="/remove_favorite")
+	@ResponseBody
+	public void remove_favorite(@RequestBody Query query, HttpSession session, Model model) {
+		String username = (String) session.getAttribute("login");
+
+		List<Query> found = queryDao.findByAll(query);
+		if (found.size() == 0) {
+			// do nothing
+			return;
+		}
+
+		userDao.removeUserQuery(username, found.get(0));
+		model.addAttribute("favorites", queryDao.findFavorites(username));
+	}
     
     @RequestMapping(value = "/timespan" , method = RequestMethod.GET)
     public @ResponseBody
@@ -123,7 +162,7 @@ public class MainController {
     	System.out.println("After dateformet : " + dt);
     	ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
     	try {
-			String json = ow.writeValueAsString(_trendDao.wordListForTrendWithinDate(dt,trend));
+			String json = ow.writeValueAsString(_trendDao.wordListForTrendWithinDate(dt, trend));
 			System.out.println(json);
 			return json;
 		} catch (JsonProcessingException e) {

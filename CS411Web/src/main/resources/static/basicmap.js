@@ -47,9 +47,37 @@ $("#timespan").on('change',function(){
 });
 
 
+function updateFavsWordmap(query) {
+    $(".favorite").each(function(index, value) {
+        if (query == $(value).attr("value")) {
+		    $("#wordmap-favorite").removeClass("glyphicon-heart-empty");
+		    $("#wordmap-favorite").addClass("glyphicon-heart");
+		    return;
+        }
+    });
+
+		    $("#wordmap-favorite").addClass("glyphicon-heart-empty");
+		    $("#wordmap-favorite").removeClass("glyphicon-heart");
+}
+
+function updateFavsMain(query) {
+    $(".favorite").each(function(index, value) {
+        if (query == $(value).attr("value")) {
+		    $("#main-favorite").removeClass("glyphicon-heart-empty");
+		    $("#main-favorite").addClass("glyphicon-heart");
+		    return;
+        }
+    });
+		    $("#main-favorite").addClass("glyphicon-heart-empty");
+		    $("#main-favorite").removeClass("glyphicon-heart");
+}
 
 $("#dropdown").on('change',function(){
     var id=$(this).val();
+
+    mainquery = JSON.stringify({
+        trend: id
+    });
 
     $.ajax({
         url: "/timespan",
@@ -93,6 +121,9 @@ $("#dropdown").on('change',function(){
                             data: response});
 	            }
 		});
+
+		// Check to see if this is going to be a favorite
+		updateFavsMain(mainquery);
 
   });
 
@@ -155,9 +186,8 @@ $("#main-tab").click(function(e) {
     showMapTab();
 });
 
-$("#generate-wordmap").click(function(e) {
-  bounds = map.getBounds();
-
+function generateWordmap(query) {
+    wordmapquery = query;
   $.ajax({
     type: "POST",
     url: "/generate-wordmap",
@@ -166,13 +196,7 @@ $("#generate-wordmap").click(function(e) {
       'Content-Type': 'application/json'
     },
     dataType: 'json',
-    data: JSON.stringify({
-      "latitudeTop": bounds.getNorth(),
-      "latitudeBottom": bounds.getSouth(),
-      "longitudeLeft": bounds.getWest(),
-      "longitudeRight": bounds.getEast(),
-      "trend": $("#dropdown").val()
-    }),
+    data: wordmapquery,
     success: function(response) {
       d3.layout.cloud().size([500, 500])
         .words(response)
@@ -185,6 +209,19 @@ $("#generate-wordmap").click(function(e) {
         showWordmapTab();
     }
   });
+
+  updateFavsWordmap(wordmapquery);
+}
+
+$("#generate-wordmap").click(function(e) {
+  bounds = map.getBounds();
+  generateWordmap(JSON.stringify({
+                       "latitudeTop": bounds.getNorth(),
+                       "latitudeBottom": bounds.getSouth(),
+                       "longitudeLeft": bounds.getWest(),
+                       "longitudeRight": bounds.getEast(),
+                       "trend": JSON.parse(mainquery).trend
+                     }));
 });
 
 $(".select").change(function(e) {
@@ -209,31 +246,151 @@ $(".select").change(function(e) {
 });
 
 $("#wordmap-favorite").click(function(e) {
+    if (wordmapquery) {
+
     $("#wordmap-favorite").toggleClass("glyphicon-heart");
     $("#wordmap-favorite").toggleClass("glyphicon-heart-empty");
-
     if ($("#wordmap-favorite").hasClass("glyphicon-heart-empty")) {
-        // removed favorite
+                  $.ajax({
+                    type: "POST",
+                    url: "/remove_favorite",
+                    headers: {
+                      'Accept': 'application/json',
+                      'Content-Type': 'application/json'
+                    },
+                    dataType: 'json',
+                    data: wordmapquery,
+                    success: function(response) {
+                    }
+
+                  });
+        // Remove from the list on the side
+        $("#favorites-list li a").each(function(index, value) {
+            if ($(value).attr("value") == wordmapquery) {
+                $(value).parent("li").remove();
+            }
+        });
+
     } else {
-        // add favorite
+          $.ajax({
+            type: "POST",
+            url: "/favorite",
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            dataType: 'json',
+            data: wordmapquery,
+            success: function(response) {
+            }
+          });
+
+        // Add to the list on the side
+        var li = $("<li></li>");
+        var a = $('<a href="#"></a>');
+        var q = JSON.parse(wordmapquery);
+        a.text("Wordmap: " + q["trend"] + " bound by " + + q.latitudeBottom + "," +
+                q.latitudeTop + "," + q.longitudeLeft + "," + q.longitudeRight);
+        a.attr("value", wordmapquery);
+        a.click(function(e) {
+            favoriteClickEvent(e);
+        });
+        li.append(a)
+        $("#favorites-list").append(li);
     }
+    }
+
 })
 
 $("#main-favorite").click(function(e) {
+    if (mainquery) {
     $("#main-favorite").toggleClass("glyphicon-heart");
     $("#main-favorite").toggleClass("glyphicon-heart-empty");
 
     if ($("#main-favorite").hasClass("glyphicon-heart-empty")) {
-        // removed favorite
+          $.ajax({
+            type: "POST",
+            url: "/remove_favorite",
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            dataType: 'json',
+            data: mainquery,
+            success: function(response) {
+            }
+          });
+        // Remove from the list on the side
+        $("#favorites-list li a").each(function(index, value) {
+            if ($(value).attr("value") == mainquery) {
+                $(value).parent("li").remove();
+            }
+        })
     } else {
-        // add favorite
-        console.log("Favorited main");
+          $.ajax({
+            type: "POST",
+            url: "/favorite",
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            dataType: 'json',
+            data: mainquery,
+            success: function(response) {
+            }
+          });
+
+        // Add to the list on the side
+        var li = $("<li></li>");
+        var a = $('<a href="#"></a>');
+        var q = JSON.parse(mainquery);
+        a.text("Sentiment Map: " + q["trend"]);
+        a.attr("value", mainquery);
+                a.click(function(e) {
+                    favoriteClickEvent(e);
+                });
+        li.append(a)
+        $("#favorites-list").append(li);
+    }
     }
 })
 
+function favoriteClickEvent(e) {
+    if ($(e.target).text().split(":")[0] == "Sentiment Map") {
+        var id = JSON.parse($(e.target).attr("value"))["trend"];
+        mainquery = JSON.stringify({
+                            trend: id
+                        });
+	  $.ajax({
+	        url: "/select",
+	        method: 'GET',
+	        data: {"trend_chosen": id},
+	        //dataType: 'json',
+	        contentType: 'application/json',
+	        mimeType: 'application/json',
+	        success: function (response) {
+	            console.log(response);
+	                        heatmapLayer.setData({max: 4,
+                            data: response});
+	            }
+		});
+
+		showMapTab();
+		$("#main-favorite").removeClass("glyphicon-heart-empty");
+		$("#main-favorite").addClass("glyphicon-heart");
+    } else {
+        generateWordmap($(e.target).attr("value"));
+
+		$("#wordmap-favorite").removeClass("glyphicon-heart-empty");
+		$("#wordmap-favorite").addClass("glyphicon-heart");
+    }
+}
+
+$(".favorite").click(function(e) {
+    favoriteClickEvent(e);
+});
+
 window.onload = function() {
-	
-	
   var baseLayer = L.tileLayer(
     'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
       attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
