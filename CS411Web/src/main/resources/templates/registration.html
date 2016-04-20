@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Getting Started: Handling Form Submission</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class ="container">
+	<br></br>
+	<br></br>
+    <div class="row">
+        <div id = "bix" class= "col-md-4 col-md-offset-4">
+            <div class="panel panel-default">
+                <div class="panel-heading"> <strong class="">Registration</strong>
+
+                </div>
+                <div class="panel-body">
+                    <form class="form-horizontal" action="#" th:action="@{/registration}" th:object="${registration}" method="post">
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-3 control-label">UserName</label>
+                            <div class="col-sm-9">
+                                <input type="text" th:field="*{username}" class="form-control" id="inputEmail3" placeholder="UserName" required=""/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPassword3" class="col-sm-3 control-label">Password</label>
+                            <div class="col-sm-9">
+                                <input type="password" th:field="*{password}" class="form-control" id="inputPassword3" placeholder="Password" required=""/>
+                            </div>
+                        </div>
+         
+                        <div class="form-group last">
+                            <div class="col-sm-offset-3 col-sm-9">
+                                <button type="submit" class="btn btn-success btn-sm">Register</button>
+                                <button type="reset" class="btn btn-default btn-sm">Reset</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+
+
+
+<!-- 	<h1>Form</h1>
+	
+	
+	
+    <form action="#" th:action="@{/registration}" th:object="${registration}" method="post">
+    	<p>Username: <input type="text" th:field="*{username}" /></p>
+        <p>Password: <input type="text" th:field="*{password}" /></p>
+        <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+    </form> -->
+</body>
+</html>

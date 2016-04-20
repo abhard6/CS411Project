@@ -45,10 +45,9 @@
         </ul>
         <ul class="nav navbar-nav pull-right">
             <li class="dropdown">
-                <a href="#" id="nbAcctDD" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user"></i>Username<i
-                        class="icon-sort-down"></i></a>
+                 <a href="#" id="nbAcctDD" class="dropdown-toggle" data-toggle="dropdown" th:text ="${login != null}? ${login.userName}:'Login'"></a>
                 <ul class="dropdown-menu pull-right">
-                    <li><a href="#">Log Out</a></li>
+                    <li><a href="#" id="logout">LogOut</a></li>
                 </ul>
             </li>
         </ul>
@@ -111,6 +110,37 @@
         </div>
     </div>
 </div>
-
-<script src="basicmap.js"></script>
+<body>
+<script>
+$("#logout").click(function(e) {
+	
+	alert("i am here");
+	
+	$.ajax({ 
+	    url: '/logout',    
+	    type: "POST", 
+	    headers: { 
+	        'Accept': 'application/json', 
+	        'Content-Type': 'application/json' 
+	    },
+		dataType: 'html',
+	    success: function(resposeJsonObject) {            
+	        //
+	    	window.location.href = "/login"
+	    }
+	});
+	
+	
+	});
+</script>
+<script>
+$("#nbAcctDD").click(function(e) {
+	if ($(e.target).text() == "Login") {
+		window.location.href = "/login";
+	}	
+	});
+	
+</script>	
+<script src="basicmap.js"></script>	
+</body>
 </html>

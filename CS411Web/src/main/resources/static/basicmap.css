@@ -1,3 +1,30 @@
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+
+/* CSS used here will be applied after bootstrap.css */
+
+body { 
+ background: url('/assets/example/bg_suburb.jpg') no-repeat center center fixed; 
+ -webkit-background-size: cover;
+ -moz-background-size: cover;
+ -o-background-size: cover;
+ background-size: cover;
+}
+
+.center {
+  margin: auto;
+  position: absolute;
+  top: 40%; left: 15%; bottom: 0; right: 0;
+}
+
+.panel-default {
+ opacity: 0.9;
+ margin-top:0px;
+}
+.form-group.last {
+ margin-bottom:20px;
+}
+
+
 body {
   padding-top: 50px;
   overflow: hidden;

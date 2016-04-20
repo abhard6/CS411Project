@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+	<title>RIFT:Login page</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	
+	
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class ="container jumbotron">
+	This is the Login Page
+</div>
+
+<div class ="container">
+	<br></br>
+	<br></br>
+    <div class="row">
+        <div id = "bix" class= "col-md-4 col-md-offset-4">
+            <div class="panel panel-default">
+                <div class="panel-heading"> <strong class="">Login</strong>
+
+                </div>
+                <div class="panel-body">
+                    <form class="form-horizontal" role="form" action="#" th:action="@{/login}" th:object="${login}" method="post">
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-3 control-label">UserName</label>
+                            <div class="col-sm-9">
+                                <input type="text" th:field="*{userName}" class="form-control" id="inputEmail3" placeholder="UserName" required=""/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPassword3" class="col-sm-3 control-label">Password</label>
+                            <div class="col-sm-9">
+                                <input type="password" th:field="*{password}" class="form-control" id="inputPassword3" placeholder="Password" required=""/>
+                            </div>
+                        </div>
+         
+                        <div class="form-group last">
+                            <div class="col-sm-offset-3 col-sm-9">
+                                <button id = "check" type="submit" class="btn btn-success btn-sm">Sign in</button>
+                                <button type="reset" class="btn btn-default btn-sm">Reset</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="panel-footer">Not Registered? <a href="registration" class="">Register here</a>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div> 
+</body>
+</html>
