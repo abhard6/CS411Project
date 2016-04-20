@@ -22,3 +22,15 @@ CREATE TABLE `trended_post` (
 FOREIGN KEY (`post_id`) REFERENCES `Post` (`id`), 
 FOREIGN KEY (`trend_id`) REFERENCES `Trend` (`value`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `Query` (
+`id` bigint(20) PRIMARY KEY AUTO_INCREMENT,
+`day_chosen` varchar(255),
+`trend` varchar(255),
+`latitude_top` float,
+`latitude_bottom` float,
+`longitude_left` float,
+`longitude_right` float,
+FOREIGN KEY (`trend`) REFERENCES `Trend` (`value`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+   

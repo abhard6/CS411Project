@@ -80,17 +80,7 @@ public class PostDao extends BasicDao<Post>{
                 "longitude>" + query.longitudeLeft + " and " +
                 "longitude<" + query.longitudeRight + ") as p " +
                 "on trended_post.post_id=p.id " +
-                "where ";
-
-        for (int i = 0; i < query.trends.size(); i++) {
-            sql += "trended_post.trend_id=\""+query.trends.get(i) + "\"";
-
-            if (i == query.trends.size()-1) {
-                sql += ";";
-            } else {
-                sql += " AND ";
-            }
-        }
+                "where trended_post.trend_id=\"" + query.trend + "\";";
 
         ResultSet r = mySql.executeQuery(sql);
 

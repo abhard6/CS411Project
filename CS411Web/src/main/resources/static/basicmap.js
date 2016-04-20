@@ -132,6 +132,7 @@ function drawUpdate(words){
 function showWordmapTab() {
     // show the wordmap tab
     $("#wordmap-tab").removeClass("hidden");
+    $("#wordmap-favorite").removeClass("hidden");
     $(".nav-tabs li").removeClass("active");
     $("#wordmap-tab").addClass("active");
     $("#main").addClass("hidden");
@@ -170,7 +171,7 @@ $("#generate-wordmap").click(function(e) {
       "latitudeBottom": bounds.getSouth(),
       "longitudeLeft": bounds.getWest(),
       "longitudeRight": bounds.getEast(),
-      "trends": [$("#dropdown").val()]
+      "trend": $("#dropdown").val()
     }),
     success: function(response) {
       d3.layout.cloud().size([500, 500])
@@ -206,6 +207,29 @@ $(".select").change(function(e) {
     		});
 	  }
 });
+
+$("#wordmap-favorite").click(function(e) {
+    $("#wordmap-favorite").toggleClass("glyphicon-heart");
+    $("#wordmap-favorite").toggleClass("glyphicon-heart-empty");
+
+    if ($("#wordmap-favorite").hasClass("glyphicon-heart-empty")) {
+        // removed favorite
+    } else {
+        // add favorite
+    }
+})
+
+$("#main-favorite").click(function(e) {
+    $("#main-favorite").toggleClass("glyphicon-heart");
+    $("#main-favorite").toggleClass("glyphicon-heart-empty");
+
+    if ($("#main-favorite").hasClass("glyphicon-heart-empty")) {
+        // removed favorite
+    } else {
+        // add favorite
+        console.log("Favorited main");
+    }
+})
 
 window.onload = function() {
 	
