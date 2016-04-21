@@ -76,9 +76,9 @@ public class WordmapGenerator {
             pq.add(entry);
         }
 
-        // Now only give the top 150
+        // Now only give the top 100
         ret.clear();
-        for (int i = 0; i < 150; i++) {
+        for (int i = 0; i < 100; i++) {
             WordFreqEntry entry = pq.poll();
             if (entry != null) {
                 // Exclude stopwords
