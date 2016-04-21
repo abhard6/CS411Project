@@ -33,7 +33,10 @@ public class QueryDao extends BasicDao<Query> {
                     "ABS(latitude_bottom-" + t.latitudeBottom + ") < 0.01 AND " +
                     "ABS(longitude_right-" + t.longitudeRight + ") < 0.01 AND " +
                     "ABS(longitude_left-" + t.longitudeLeft + ") < 0.01;";
+        } else {
+            q += " AND latitude_top=0 AND latitude_bottom=0";
         }
+        
         return fromResultSet(mySql.executeQuery(q));
     }
 
