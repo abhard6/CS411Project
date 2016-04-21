@@ -422,9 +422,9 @@ window.onload = function() {
     gradient: {
       // enter n keys between 0 and 1 here
       // for gradient color customization
-      '0': 'green',
+      '1': 'green',
       '0.5': 'blue',
-      '1': 'red'
+      '0': 'red'
     },
     blur: 0
   };

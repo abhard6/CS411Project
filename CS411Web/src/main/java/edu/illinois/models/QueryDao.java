@@ -36,7 +36,7 @@ public class QueryDao extends BasicDao<Query> {
         } else {
             q += " AND latitude_top=0 AND latitude_bottom=0";
         }
-        
+
         return fromResultSet(mySql.executeQuery(q));
     }
 
